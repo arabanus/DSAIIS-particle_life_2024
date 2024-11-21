@@ -48,53 +48,44 @@ class Particle:
 
 
 class InteractionMatrix:
-    def __init__(self, particle_dict, all_particles) -> None:
-        """_summary_
-
-        Args:
-            particle_a (_type_): _description_
-            particle_b (_type_): _description_
-            particle_c (_type_): _description_
-            particle_d (_type_): _description_
-        """
+    def __init__(self, particle_dict) -> None:
         self.particle_dict = particle_dict
         self.interaction_matrix = np.zeros((len(particle_dict), len(particle_dict)))
 
-    def particle_rules(self, particle_dict_key, particle_dict):
-        """temporary function to handle particle information
-
-        Returns:
-            list: each value for a dictionary key
-        """
-        self.particle_dict = particle_dict
-        
-
-    def influence_function(self, particle_dict):
-        """_summary_
+    def influence_function(self, particle_1, particle_2, distance):
+        """Should use influence_value, influence_radius and influence_coefficient
+           calculate the influence of one particle to the next depending on their distance
 
         Args:
-            particle_dict (_type_): _description_
+            particle_1 (int): particle 1 label
+            particle_1 (int): particle 2 label
+            distance (float): distance between particles
+            
+        Returns:
+            current_influence (float): influence between particles depending on theis distance
+        """
+        current_influence = 1 # current default
+        return current_influence
+
+    def generate_influence_array(self):
+        """generates numpy array of the particle relationships depending on the values in the entry index 1 of the dictionary
 
         Returns:
-            _type_: _description_
+            self.influence_array (np.array): particle relationship array with the size (num_particle_types x num_particle_types)
         """
-        influence_depending_on_distance = 1
-        return influence_depending_on_distance
-
-    def generate_influence_array(self, particle:int, particle_dict:dict):
         interaction_type_list = []
-        for particle in particle_dict:
-            influence_type = particle_dict[particle][1]        # list of len(num_particle_types) values with eiter -1, 0 or 1
+        for particle in self.particle_dict:
+            influence_type = self.particle_dict[particle][1]        # list of len(num_particle_types) values with eiter -1, 0 or 1
             interaction_type_list.append(influence_type)
         self.influence_array = np.array(interaction_type_list)
         print(self.influence_array)
         return self.influence_array
     
     def plot_influence_matrix(self, cmap='seismic'):
-        """_summary_
+        """Uses the particle relationship values to plot an interaction heatmap
 
         Args:
-            cmap (str, optional): _description_. Defaults to 'viridis'.
+            cmap (str, optional): color choice for heatmap. Defaults to 'seismic'.
         """
         n = self.influence_array.shape[0]
 
@@ -158,9 +149,6 @@ if __name__ == "__main__":
         3: [3, [d_to_a, d_to_b, d_to_c, d_to_d], random.uniform(-1, 1), random.uniform(-1, 1), random.uniform(0, 1), (random.randint(1, 360), random.uniform(0, 1)), "yellow"]
     }
 
-    # Particle labels
-    particles = [0, 1, 2, 3]
-
-    interaction_matrix = InteractionMatrix(particle_dict=particle_dict, all_particles=particles)
-    interaction_matrix.generate_influence_array(particles[0], particle_dict)
+    interaction_matrix = InteractionMatrix(particle_dict=particle_dict)
+    interaction_matrix.generate_influence_array()
     interaction_matrix.plot_influence_matrix()
