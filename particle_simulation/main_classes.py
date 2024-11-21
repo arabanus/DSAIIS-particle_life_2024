@@ -88,7 +88,7 @@ class InteractionMatrix:
             interaction_type_list.append(influence_type)
         self.influence_array = np.array(interaction_type_list)
         print(self.influence_array)
-        return
+        return self.influence_array
     
     def plot_influence_matrix(self, cmap='seismic'):
         """_summary_
