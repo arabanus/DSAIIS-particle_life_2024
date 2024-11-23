@@ -3,7 +3,7 @@
 import math
 import random
 import time
-
+import uuid
 
 
 
@@ -21,9 +21,10 @@ class ParticleField:
 class Particle:
     def __init__(self, label=None):
         # Basic properties of the particle
+        self.id = uuid.uuid4()
         self.particle_label = label                                       # Name of the particle
         self.position = (random.uniform(0, 100), random.uniform(0, 100))  # Random start position
-        self.speed = 0.5                                                 # Speed in seconds 
+        self.speed = 0.5                                                  # Speed in seconds 
         self.movement = (random.uniform(0, 360), random.uniform(2, 5))    # Movement: (angle in degrees, distance)
         self.influence_strength = random.uniform(0, 1)**2                 # Random quadratic strength
         self.influence_radius = 1.0                                       # Radius of influence
@@ -45,7 +46,7 @@ class Particle:
         #if self.position[1] <= 0 or self.position[1] >= ?:
         #     # Reverse vertical direction
         #if self.position[0] <= 0 or self.position[0] <= ?:
-        #    # Reverse horizontal direction
+        #     # Reverse horizontal direction
         #if self.position[1] <= 0 or self.position[1] <= ?:
         #     # Reverse vertical direction
         
@@ -59,12 +60,6 @@ class Particle:
         while True:
             time.sleep(self.speed)  # Wait time determined by speed
             self.particle_movement()
-
-    def apply_effect(self, target_particle):
-        """
-        Applies an effect to a target particle based on interaction rules.
-        """
-        Effects.apply_effect(self, target_particle)
 
     def return_packed_variables_as_dict(self):
         """
@@ -81,13 +76,13 @@ class Particle:
         }
 
     def characteristics(self, **kwargs):
-        """
-        Updates the particle's characteristics based on keyword arguments.
-        """
         for key, value in kwargs.items():
-            if hasattr(self, key):
-                setattr(self, key, value)
+            if key == "speed" and value <= 0:
+                raise ValueError("Speed must be positive")
+            if key == "position" and not (isinstance(value, tuple) and len(value) == 2):
+                raise TypeError("Position must be a tuple of two numbers")
 
+        setattr(self, key, value)
     def shape(self):
         """
         Returns the shape of the particle. Can be overridden in child classes.
@@ -99,14 +94,6 @@ class Particle:
         Debug string for the particle.
         """
         return f"Particle({self.particle_label}, Position={self.position}, Speed={self.speed}s, Color={self.color})"
-
-
-class InteractionMatrix:
-    def __init__(self) -> None:
-        pass
-
-    def relationships(self):
-        pass
 
 
 
