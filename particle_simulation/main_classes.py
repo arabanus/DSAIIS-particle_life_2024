@@ -27,8 +27,7 @@ class Particle:
         self.speed = 0.5                                                  # Speed in seconds 
         self.movement = (random.uniform(0, 360), random.uniform(2, 5))    # Movement: (angle in degrees, distance)
         self.influence_strength = random.uniform(0, 1)**2                 # Random quadratic strength
-        self.influence_radius = 1.0                                       # Radius of influence
-        self.color = (255, 255, 255)                                      # Default color (white) 
+        self.influence_radius = 1.0                                       # Radius of influence                                          
 
     def particle_movement(self):
         """
@@ -81,13 +80,70 @@ class Particle:
                 raise ValueError("Speed must be positive")
             if key == "position" and not (isinstance(value, tuple) and len(value) == 2):
                 raise TypeError("Position must be a tuple of two numbers")
+            setattr(self, key, value)
+            
 
         setattr(self, key, value)
+
     def shape(self):
         """
         Returns the shape of the particle. Can be overridden in child classes.
         """
         return "Circle"
+    
+    def generate_particle_colors(particle_types, iterations):
+        """
+        Generates unique colors for each particle type with equal iterations.
+
+        Args:
+            particle_types (list): List of particle types (e.g., ['type1', 'type2']).
+            iterations (int): Total number of colors to generate which equals the total of particles generated (must be divisible by number of types).
+
+        Returns:
+            dict: A dictionary where each particle type has a set of unique colors.
+        """
+        # Ensure iterations are divisible by the number of particle types so that each type for sure gets a color
+        num_types = len(particle_types)
+        assert iterations % num_types == 0, f"Iterations ({iterations}) must be divisible by {num_types}."
+
+        colors_per_type = iterations // num_types
+
+        # Define base colorways for each particle type
+        base_colorways = {
+            "type1": "red",
+            "type2": "green",
+            "type3": "blue",
+            "type4": "yellow"
+        }
+
+        # Initialize a dictionary to store unique colors for each particle type
+        particle_colors = {ptype: set() for ptype in particle_types}
+
+        for ptype in particle_types:
+            colorway = base_colorways.get(ptype, "other")
+            for _ in range(colors_per_type):
+                while True:
+                    # Generate a random color
+                    r, g, b = random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)
+                    color = (r, g, b)
+                    
+                    # Assign the color based on its colorway
+                    if colorway == "red" and r > g and r > b:
+                        particle_colors[ptype].add(color)
+                        break
+                    elif colorway == "green" and g > r and g > b:
+                        particle_colors[ptype].add(color)
+                        break
+                    elif colorway == "blue" and b > r and b > g:
+                        particle_colors[ptype].add(color)
+                        break
+                    elif colorway == "yellow" and r > 200 and g > 200 and b < 100:
+                        particle_colors[ptype].add(color)
+                        break
+
+        return particle_colors
+
+
 
     def __repr__(self):
         """
