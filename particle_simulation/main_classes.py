@@ -29,27 +29,37 @@ class Particle:
         self.influence_strength = random.uniform(0, 1)**2                 # Random quadratic strength
         self.influence_radius = 1.0                                       # Radius of influence                                          
 
-    def particle_movement(self):
+    def particle_movement(self, bounds=(100, 100)):
         """
         Calculates the new position based on movement properties (angle, distance).
+        Teleports the particle to the opposite side if it goes out of bounds.
+        
+        Args:
+            bounds (tuple): The width and height of the particle field (default: (100, 100)).
         """
         angle, distance = self.movement
         dx = distance * math.cos(math.radians(angle))
         dy = distance * math.sin(math.radians(angle))
 
-        self.position = (self.position[0] + dx, self.position[1] + dy) #update position
+        # Update position
+        new_x = self.position[0] + dx
+        new_y = self.position[1] + dy
 
-        # Keep the particle within bounds (bounce off walls)
-        #if self.position[0] <= 0 or self.position[0] >= ?:
-        #    # Reverse horizontal direction
-        #if self.position[1] <= 0 or self.position[1] >= ?:
-        #     # Reverse vertical direction
-        #if self.position[0] <= 0 or self.position[0] <= ?:
-        #     # Reverse horizontal direction
-        #if self.position[1] <= 0 or self.position[1] <= ?:
-        #     # Reverse vertical direction
-        
-        # print(f"[DEBUG] {self.particle_label}: Position={self.position}, Movement={self.movement}")             #for debug purposes 
+        # Wrap horizontal position
+        if new_x < 0:
+            new_x = bounds[0] + new_x  # Wrap to the opposite side
+        elif new_x > bounds[0]:
+            new_x = new_x - bounds[0]
+
+        # Wrap vertical position
+        if new_y < 0:
+            new_y = bounds[1] + new_y  # Wrap to the opposite side
+        elif new_y > bounds[1]:
+            new_y = new_y - bounds[1]
+
+        # Update particle attributes
+        self.position = (new_x, new_y)
+
 
     def start_movement(self):
         """
