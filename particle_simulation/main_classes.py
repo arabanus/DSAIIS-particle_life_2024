@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import math
 import numpy as np
+import random
 
 """Main classes to run the simulation
 """
@@ -33,11 +34,11 @@ class InteractionMatrix:
 
 
 class ParticleField:
-    def __init__(self, width, height, particles, num_particles_param, influence_radius, current_influence):
+    def __init__(self, width, height, particles, num_particles, influence_radius, current_influence):
         self.width = width
         self.height = height
         self.particles = self.generate_particles()
-        self.num_particles = num_particles_param
+        self.num_particles = num_particles
 
     def create_field(self, scale_factor=10): # kann gelöscht werden wenn wir weiter im Projekt sind
         """
@@ -53,9 +54,9 @@ class ParticleField:
         """
         Generates particles distributed evently on a grid.
         """
+        from particle_simulation.particle_classes import Particle_a, Particle_B, Particle_C, Particle_D # lazy import to avoid loop
         particles_list = []
-        
-        # Berechnung des Gitterrasters
+        particle_type = random.choice([Particle_a, Particle_B, Particle_C, Particle_D])
         grid_size = math.ceil(self.num_particles**0.5)  # Rundet auf, um alle Partikel unterzubringen
         spacing_x = self.width / grid_size             # Abstand zwischen Partikeln entlang x
         spacing_y = self.height / grid_size            # Abstand zwischen Partikeln entlang y
@@ -66,7 +67,7 @@ class ParticleField:
                 if len(particles_list) < self.num_particles:  # Nur Partikel generieren, bis die gewünschte Anzahl erreicht ist
                     x = (i + 0.5) * spacing_x  # Partikel zentriert in der Zelle
                     y = (j + 0.5) * spacing_y
-                    particles_list.append(Particle(x, y))
+                    particles_list.append(particle_type((x, y)))
         return particles_list
     
     def assign_colors_to_particles(self, particle_types):
@@ -90,11 +91,17 @@ class ParticleField:
         """
         Plots all particles on a given matplotlib axis with their assigned colors.
         """
-        x_coords = [particle.position[0] for particle in self.particles]
-        y_coords = [particle.position[1] for particle in self.particles]
-        colors = [particle.color for particle in self.particles]
-        scatter = ax.scatter(x_coords, y_coords, s=10, color=colors)
-        return scatter
+        scatter_objects = {} # store scatter objects for each shape
+
+        for shape in set(p.shape for p in self.particles):
+            x_coords = [particle.position[0] for particle in self.particles if particle.shape == shape]
+            y_coords = [particle.position[1] for particle in self.particles if particle.shape == shape]
+            colors = [particle.color for particle in self.particles if particle.shape == shape]
+
+            scatter = ax.scatter(x_coords, y_coords, s=30, color=colors, marker=shape)
+            scatter_objects[shape] = scatter
+
+        return scatter_objects
 
     # particles bewegen
     def find_particles_within_reactionradius(self, main_particle):
@@ -102,12 +109,16 @@ class ParticleField:
         Finds all particles within the influence radius of the main particle.
         """
         neighbors = []
+
         for particle in self.particles:
             if particle is not main_particle:  # Sich selbst ignorieren
-                distance = np.sqrt((main_particle.position[0] - particle.position[0]) ** 2 +
-                                   (main_particle.position[1] - particle.position[1]) ** 2)
+                dx = (main_particle.position[0] - particle.position[0])
+                dy = (main_particle.position[1] - particle.position[1])
+                distance = math.sqrt(dx ** 2 + dy ** 2)
+
                 if distance <= main_particle.influence_radius:
                     neighbors.append(particle)
+
         return neighbors
     
     def move_particles(self):
@@ -119,7 +130,6 @@ class ParticleField:
         
             # Iteriere über Nachbarn
             for neighbor in neighbors:
-                # Berechne den Abstand und die Richtung
                 dx = neighbor.position[0] - particle.position[0]
                 dy = neighbor.position[1] - particle.[1]
                 distance =  math.sqrt(dx ** 2 + dy ** 2)
@@ -146,13 +156,17 @@ class ParticleField:
         """
         Updates the scatter plot with new particle positions.
         """
-        scatter.set_offsets([particle.positoin for particle in self.particles])
+        for shape, scatter in scatter_objects.items():
+           scatter.set_ofsets([
+                (particle.position[0], particle.position[1]) 
+                for particle in self.particles if particle.shape == shape
+           ])
 
     def start_movement(self, ax):
         """
         Simulates continious particle movement with matplotlib visualization.
         """
-        scatter = self.plot_particles(ax)
+        scatter_objects = self.plot_particles(ax)
         while True:
             self.move_particles() # Bewegung ausführen
             self.update_plot(scatter) # Plot aktualisieren
