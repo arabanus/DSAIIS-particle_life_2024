@@ -25,7 +25,6 @@ class ParticleField:
         ax.set_title("Particle Field")
         return fig, ax
 
-
     def generate_particles(self):
         """
         Generates particles distributed evenly on a grid
@@ -246,6 +245,7 @@ class interaction_effects:
                 
                 if repulsion_enabled.get(interaction_key, False):
 
+
                     #--------->implement repulsion logic here <----------
                 
                     pass
@@ -264,7 +264,7 @@ class interaction_effects:
         """Finds neighbors within the reaction radius using an efficient cKDTree model"""
         neighbors_idx = self.spatial_tree.query_ball_point(main_particle.position, main_particle.influence_radius)
 
-        return [self.particles[i] for i in neighbors_idx if self.particles[i] != main_particle]
+        return [self.particles[i] for i in neighbors_idx if self.particles[i] != main_particle] #exclude the particle it self ad a neighbor
 
 
 

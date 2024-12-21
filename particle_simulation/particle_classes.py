@@ -45,7 +45,7 @@ class Particle_D(Particle):
         self.step_size = -0.2
         self.influence_strength = 0.5
         self.influence_radius = 1
-        self.color = Particle.generate_particle_colors(self.particle_label, 1)[0]  #gets a colorway for this spicific type#
+        self.color = Particle.generate_particle_colors(self.particle_label, 1)[0]  #gets a colorway for this spicific type
         self.shape = Particle.generate_particle_shape(self.particle_label)
 
 
@@ -56,7 +56,7 @@ class Particle_D(Particle):
 
 if __name__ == "__main__":
     
-    field = ParticleField(width=200, height=200, num_particles=300)
+    field = ParticleField(width=200, height=200, num_particles=2000)
     fig, ax = field.create_field()
 
     try:
