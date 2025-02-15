@@ -3,11 +3,18 @@ FULLY INTEGRATED SIMULATION WITH PYGAME GUI
 """
 import pygame
 import random
+import os
 import sys
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from pygame.locals import *
 from particle_simulation.main_classes import ParticleField, interaction_effects
 from particle_simulation.particle_classes import Particle_A, Particle_B, Particle_C, Particle_D
 from particle_simulation.gui import ParticleGUI  # Make sure gui.py is in same directory
+import cProfile
+import pstats
+import sys
+
 
 def main():
     # ===== PYGAME INIT ===== 
@@ -71,7 +78,10 @@ def main():
 
             # Particle interactions
             effect.build_spatial_index()
-            effect.attract_particles(gui.interaction_matrix)  # Use GUI's interaction rules
+            effect.repel_particles(gui.repulsion_matrix)  # Abstoßung berechnen
+            effect.attract_particles(gui.interaction_matrix)  # Anziehung berechnen
+
+
 
         # === Rendering ===
         screen.fill((0, 0, 0))  # Clear screen
@@ -118,4 +128,4 @@ def main():
     sys.exit()
 
 if __name__ == "__main__":
-    main()  # CRUCIAL: This launches everything
+        main()  # CRUCIAL: This launches everything

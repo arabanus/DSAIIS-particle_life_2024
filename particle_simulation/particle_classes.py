@@ -10,7 +10,7 @@ class Particle_A(Particle):
         self.influence_strength = 0.5
         self.influence_radius = 25
         self.color = Particle.generate_particle_colors(self.particle_label, 1)[0] #gets a colorway for this spicific type (red)
-        self.shape = Particle.generate_particle_shape(self.particle_label)
+        
 
 
 class Particle_B(Particle):
@@ -21,7 +21,8 @@ class Particle_B(Particle):
         self.influence_strength = 1
         self.influence_radius = 50
         self.color = Particle.generate_particle_colors(self.particle_label, 1)[0]  #gets a colorway for this spicific type
-        self.shape = Particle.generate_particle_shape(self.particle_label)
+        
+
 
 
 class Particle_C(Particle):
@@ -32,7 +33,7 @@ class Particle_C(Particle):
         self.influence_strength = 5
         self.influence_radius = 75
         self.color = Particle.generate_particle_colors(self.particle_label, 1)[0]  #gets a colorway for this spicific type
-        self.shape = Particle.generate_particle_shape(self.particle_label)
+        
 
 
 class Particle_D(Particle):
@@ -43,7 +44,7 @@ class Particle_D(Particle):
         self.influence_strength = 0
         self.influence_radius = 100
         self.color = Particle.generate_particle_colors(self.particle_label, 1)[0]  #gets a colorway for this spicific type
-        self.shape = Particle.generate_particle_shape(self.particle_label)
+        
 
 
 

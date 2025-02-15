@@ -15,16 +15,6 @@ class ParticleField:
         self.particles = self.generate_particles()
 
 
-    def create_field(self, scale_factor=10):
-        """
-        Creates a matplotlib field to visualize particles
-        """
-        fig, ax = plt.subplots(figsize=(self.width / scale_factor, self.height / scale_factor))
-        ax.set_xlim(0, self.width)
-        ax.set_ylim(0, self.height)
-        ax.set_title("Particle Field")
-        return fig, ax
-
     def generate_particles(self):
         """
         Generates particles distributed evenly on a grid
@@ -47,25 +37,7 @@ class ParticleField:
 
 
 
-    def plot_particles(self, ax):
-        """
-        plots all particles on a given matplotlib axis with their assigned shapes and colors
-        Returns a dictionary of scatter objects, one for each shape
-        """
-        scatter_objects = {}  # Store scatter objects for each shape
-
-        for shape in set(p.shape for p in self.particles):
-            # Get particles of the current shape
-            x_coords = [p.position[0] for p in self.particles if p.shape == shape]
-            y_coords = [p.position[1] for p in self.particles if p.shape == shape]
-            colors = [p.color for p in self.particles if p.shape == shape]
-
-            # Plot these particles with their shape
-            scatter = ax.scatter(x_coords, y_coords, s=10, c=colors, marker=shape)
-            scatter_objects[shape] = scatter
-
-        return scatter_objects
-
+ 
 
     @staticmethod
     def move_particle(particle, velocity, width, height):
@@ -182,6 +154,7 @@ class Particle:
         self.influence_strength = random.uniform(0, 1)**2                 # Random quadratic strength
         self.influence_radius = None                                      # Radius of influence 
         self.color = None                                                 # color of the particle
+        self.shape= "o"                                           
     
     @staticmethod
     def generate_particle_colors(particle_type, iterations):
@@ -216,23 +189,6 @@ class Particle:
 
         return list(unique_colors)
     
-
-    @staticmethod
-    def generate_particle_shape(particle_type):
-        shapes = {
-        "Particle_A": "^",
-        "Particle_B": "o",
-        "Particle_C": "s",
-        "Particle_D": "D",
-        }
-  
-        if particle_type not in shapes:
-            raise ValueError(f"Unknown particle type: {particle_type}")
-
-        shape_generator = shapes[particle_type]
-
-        return shape_generator
-
 
 
 
@@ -289,15 +245,23 @@ class interaction_effects:
                 interaction_key = f"{particle.particle_label[-1]}_{neighbor.particle_label[-1]}"  # gets the last character of the particle_label and the neighbors particle_label(A_A)
                 
                 if repulsion_enabled.get(interaction_key, False):
+                    dx = neighbor.position[0] - particle.position[0]
+                    dy = neighbor.position[1] - particle.position[1]
+                    distance = math.sqrt(dx**2 + dy**2)
 
+                    if distance > 0:
+                        dx /= distance
+                        dy /= distance
 
-                    #--------->implement repulsion logic here <----------
-                
-                    pass
+                    # Bewegung umkehren (Repulsion)
+                    influence = particle.influence_strength
+                    particle.position = (
+                        particle.position[0] - dx * influence,
+                        particle.position[1] - dy * influence
+                    )
 
-                else:
-                    continue
-
+                    
+            
 
 
     def build_spatial_index(self):
@@ -310,9 +274,5 @@ class interaction_effects:
         neighbors_idx = self.spatial_tree.query_ball_point(main_particle.position, main_particle.influence_radius)
 
         return [self.particles[i] for i in neighbors_idx if self.particles[i] != main_particle] #exclude the particle it self ad a neighbor
-
-
-
-
 
 

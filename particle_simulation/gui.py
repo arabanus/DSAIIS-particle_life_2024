@@ -18,10 +18,17 @@ class ParticleGUI:
         
         # Interaction matrix state
         self.interaction_matrix = {
-            'A_A': True, 'A_B': False, 'A_C': False, 'A_D': False,
+            'A_A': False, 'A_B': False, 'A_C': False, 'A_D': False,
             'B_B': False, 'B_C': False, 'B_D': False,
             'C_C': False, 'C_D': False, 'D_D': False
         }
+
+        self.repulsion_matrix = {
+            'A_A': False, 'A_B': False, 'A_C': False, 'A_D': False,
+            'B_B': False, 'B_C': False, 'B_D': False,
+            'C_C': False, 'C_D': False, 'D_D': False
+        }
+
         
         # Parameter defaults
         self.params = {
@@ -30,6 +37,9 @@ class ParticleGUI:
             'influence_radius': 50,
             'attraction_strength': 0.5
         }
+
+        self.params['repulsion'] = False
+        self.params['attraction'] = False 
 
     def create_controls(self):
         """Initialize GUI control positions and sizes"""
@@ -42,16 +52,17 @@ class ParticleGUI:
             
             # Sliders
             'sliders': [
-                {'label': "Particles", 'min': 100, 'max': 5000, 'value': 2000, 'y': 200},
-                {'label': "Speed", 'min': 0.1, 'max': 2.0, 'value': 0.2, 'y': 250},
-                {'label': "Radius", 'min': 10, 'max': 100, 'value': 50, 'y': 300},
-                {'label': "Strength", 'min': 0.1, 'max': 1.0, 'value': 0.5, 'y': 350}
+                {'label': "Particles", 'min': 100, 'max': 5000, 'value': 2000, 'y': 500},
+                {'label': "Speed", 'min': 0.1, 'max': 2.0, 'value': 0.2, 'y': 550},
+                {'label': "Radius", 'min': 10, 'max': 100, 'value': 50, 'y': 600},
+                {'label': "Strength", 'min': 0.1, 'max': 1.0, 'value': 0.5, 'y': 650}
             ],
             
             # Buttons
             'buttons': [
-                {'label': "Reset", 'rect': pygame.Rect(20, 400, 120, 40)},
-                {'label': "Pause", 'rect': pygame.Rect(160, 400, 120, 40)}
+                {'label': "Reset", 'rect': pygame.Rect(990, 700, 120, 40)},
+                {'label': "Pause", 'rect': pygame.Rect(990, 750, 120, 40)} 
+
             ]
         }
 
@@ -64,6 +75,8 @@ class ParticleGUI:
         
         # Draw interaction matrix
         self.draw_interaction_matrix(screen)
+        self.draw_repulsion_matrix(screen)
+
         
         # Draw sliders
         self.draw_sliders(screen)
@@ -96,6 +109,30 @@ class ParticleGUI:
                     key = f"{p1}_{p2}"
                     color = self.colors['active'] if self.interaction_matrix[key] else self.colors['button']
                     pygame.draw.rect(screen, color, rect)
+    def draw_repulsion_matrix(self, screen):
+        matrix = self.controls['matrix']
+        start_x = self.screen_width - self.gui_width + matrix['x']
+        start_y = matrix['y'] + 200  # Position unter der ersten Matrix
+        
+        # Labels zeichnen
+        for i, p in enumerate(matrix['particles']):
+            text = self.font.render(p, True, self.colors['text'])
+            screen.blit(text, (start_x + i * matrix['cell_size'], start_y - 20))
+            screen.blit(text, (start_x - 20, start_y + i * matrix['cell_size']))
+        
+        # Gitter zeichnen
+        for i, p1 in enumerate(matrix['particles']):
+            for j, p2 in enumerate(matrix['particles']):
+                if j >= i:
+                    rect = pygame.Rect(
+                        start_x + j * matrix['cell_size'],
+                        start_y + i * matrix['cell_size'],
+                        matrix['cell_size'] - 2,
+                        matrix['cell_size'] - 2
+                    )
+                    key = f"{p1}_{p2}"
+                    color = self.colors['active'] if self.repulsion_matrix[key] else self.colors['button']
+                    pygame.draw.rect(screen, color, rect)
 
     def draw_sliders(self, screen):
         """Draw parameter sliders"""
@@ -119,10 +156,16 @@ class ParticleGUI:
             color = self.colors['button']
             if button['label'] == 'Pause' and self.params.get('paused'):
                 color = self.colors['active']
+            elif button['label'] == 'Repulsion' and self.params['repulsion']:
+                color = self.colors['active']  # Button wird farbig, wenn aktiv
+            elif button['label'] == 'Attract' and self.params['attraction']:
+                color = self.colors['active']  # "Attract"-Button wird farbig, wenn aktiv
+
             pygame.draw.rect(screen, color, button['rect'])
             text = self.font.render(button['label'], True, self.colors['text'])
             text_rect = text.get_rect(center=button['rect'].center)
             screen.blit(text, text_rect)
+            
 
     def handle_input(self, event):
         """Handle mouse interactions with GUI"""
@@ -133,24 +176,35 @@ class ParticleGUI:
             self.handle_button_click(mouse_pos)
 
     def handle_matrix_click(self, mouse_pos):
-        """Toggle interaction matrix cells"""
         matrix = self.controls['matrix']
         start_x = self.screen_width - self.gui_width + matrix['x']
-        start_y = matrix['y']
+        start_y_attract = matrix['y']  # Obere Matrix für Attraction
+        start_y_repel = start_y_attract + 200  # Untere Matrix für Repulsion
         
         for i in range(4):
             for j in range(i, 4):
-                rect = pygame.Rect(
+                rect_attract = pygame.Rect(
                     start_x + j * matrix['cell_size'],
-                    start_y + i * matrix['cell_size'],
+                    start_y_attract + i * matrix['cell_size'],
                     matrix['cell_size'],
                     matrix['cell_size']
                 )
-                if rect.collidepoint(mouse_pos):
-                    p1 = self.controls['matrix']['particles'][i]
-                    p2 = self.controls['matrix']['particles'][j]
-                    key = f"{p1}_{p2}"
+                rect_repel = pygame.Rect(
+                    start_x + j * matrix['cell_size'],
+                    start_y_repel + i * matrix['cell_size'],
+                    matrix['cell_size'],
+                    matrix['cell_size']
+                )
+
+                key = f"{matrix['particles'][i]}_{matrix['particles'][j]}"
+
+                # Wenn auf die obere Matrix geklickt wird, Attraction umschalten
+                if rect_attract.collidepoint(mouse_pos):
                     self.interaction_matrix[key] = not self.interaction_matrix[key]
+
+                # Wenn auf die untere Matrix geklickt wird, Repulsion umschalten
+                elif rect_repel.collidepoint(mouse_pos):
+                    self.repulsion_matrix[key] = not self.repulsion_matrix[key]
 
     def handle_slider_click(self, mouse_pos):
         """Update slider values"""
@@ -180,3 +234,8 @@ class ParticleGUI:
                     self.params['reset'] = True
                 elif button['label'] == "Pause":
                     self.params['paused'] = not self.params.get('paused', False)
+                elif button['label'] == "Repulsion":
+                    self.params['repulsion'] = not self.params['repulsion']  # Umschalten (True/False)
+                elif button['label'] == "Attract":
+                    self.params['attraction'] = not self.params['attraction']  # Umschalten (True/False)
+
