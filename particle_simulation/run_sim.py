@@ -1,104 +1,121 @@
 """
-COMPLETE particle simulation runner with Pygame
+FULLY INTEGRATED SIMULATION WITH PYGAME GUI
 """
-import os
-import random
 import pygame
-from particle_simulation.main_classes import ParticleField, interaction_effects
-from particle_simulation.particle_classes import Particle_A, Particle_B, Particle_C, Particle_D
+import random
+import sys
+from pygame.locals import *
+from main_classes import ParticleField, interaction_effects
+from particle_classes import Particle_A, Particle_B, Particle_C, Particle_D
+from gui import ParticleGUI  # Make sure gui.py is in same directory
 
 def main():
-    # ===== INITIALIZATION =====
+    # ===== PYGAME INIT ===== 
     pygame.init()
-    width, height = 1920, 1080
-    screen = pygame.display.set_mode((width, height))
-    pygame.display.set_caption("Particle Simulation")
+    screen_width = 1200  # Wider to accommodate GUI
+    screen_height = 800
+    screen = pygame.display.set_mode((screen_width, screen_height))
+    pygame.display.set_caption("Particle Simulator with Controls")
     clock = pygame.time.Clock()
-    random.seed(42)  # For reproducible randomness
 
-    # ===== PARTICLE SETUP =====
-    num_particles = 2000
-    field = ParticleField(width, height, num_particles)
+    # ===== GUI SETUP =====
+    gui = ParticleGUI(screen_width, screen_height)
+    gui.create_controls()
+    simulation_width = screen_width - gui.gui_width  # Left area for simulation
+
+    # ===== SIMULATION INIT =====
+    field = ParticleField(simulation_width, screen_height, gui.params['num_particles'])
     effect = interaction_effects(field.particles)
-
-    # ===== INTERACTION RULES =====
-    interaction_options = {
-        "A_A": True,    # A attracts A
-        "A_B": False,   # A and B interactions
-        "A_C": False,
-        "A_D": False,
-        "B_B": False,
-        "B_C": False,
-        "B_D": False,
-        "C_C": False,
-        "C_D": False,
-        "D_D": False
-    }
+    paused = False
 
     # ===== MAIN LOOP =====
     running = True
     while running:
-        # === Handle Input ===
+        # === Handle Events ===
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+            if event.type == QUIT:
                 running = False
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
+            elif event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
                     running = False
+            else:
+                gui.handle_input(event)  # Pass events to GUI
 
-        # === Update Physics ===
-        # Random movement
+        # === Handle GUI Controls ===
+        # Apply parameter changes to all particles
         for particle in field.particles:
-            velocity = (
-                random.uniform(-particle.step_size, particle.step_size),
-                random.uniform(-particle.step_size, particle.step_size)
-            )
-            particle.position = field.move_particle(
-                particle.position, velocity, width, height
-            )
+            particle.step_size = gui.params['base_speed']
+            particle.influence_radius = gui.params['influence_radius']
+            particle.influence_strength = gui.params['attraction_strength']
 
-        # Particle interactions
-        effect.build_spatial_index()
-        effect.attract_particles(interaction_options)
+        # Reset simulation if requested
+        if gui.params.get('reset'):
+            field = ParticleField(simulation_width, screen_height, gui.params['num_particles'])
+            effect = interaction_effects(field.particles)
+            gui.params['reset'] = False
 
-        # === Render Frame ===
-        screen.fill((0, 0, 0))  # Clear with black background
+        # Pause state
+        paused = gui.params.get('paused', False)
 
+        # === Physics Update ===
+        if not paused:
+            # Random movement
+            for particle in field.particles:
+                velocity = (
+                    random.uniform(-particle.step_size, particle.step_size),
+                    random.uniform(-particle.step_size, particle.step_size)
+                )
+                particle.position = field.move_particle(
+                    particle.position, velocity, simulation_width, screen_height
+                )
+
+            # Particle interactions
+            effect.build_spatial_index()
+            effect.attract_particles(gui.interaction_matrix)  # Use GUI's interaction rules
+
+        # === Rendering ===
+        screen.fill((0, 0, 0))  # Clear screen
+
+        # Draw simulation area (left side)
+        simulation_surface = screen.subsurface((0, 0, simulation_width, screen_height))
         for p in field.particles:
-            # Convert coordinates for Pygame's inverted Y-axis
-            y_pos = height - p.position[1]
+            # Coordinate conversion for Pygame's Y-axis
+            y_pos = screen_height - p.position[1]
             
-            # Convert color from 0-1 floats to 0-255 integers
+            # Color conversion (Matplotlib to Pygame)
             color = tuple(int(255 * c) for c in p.color)
             
-            # Draw different shapes
-            if p.shape == "o":  # Circle (Particle B)
-                pygame.draw.circle(screen, color, 
+            # Shape drawing
+            if p.shape == "o":  # Circle
+                pygame.draw.circle(simulation_surface, color, 
                                  (int(p.position[0]), int(y_pos)), 3)
-            elif p.shape == "s":  # Square (Particle C)
-                pygame.draw.rect(screen, color,
+            elif p.shape == "s":  # Square
+                pygame.draw.rect(simulation_surface, color,
                                 (int(p.position[0]-3), int(y_pos-3), 6, 6))
-            elif p.shape == "^":  # Triangle (Particle A)
+            elif p.shape == "^":  # Triangle
                 points = [
                     (p.position[0], y_pos - 5),
                     (p.position[0] - 5, y_pos + 5),
                     (p.position[0] + 5, y_pos + 5)
                 ]
-                pygame.draw.polygon(screen, color, points)
-            elif p.shape == "D":  # Diamond (Particle D)
+                pygame.draw.polygon(simulation_surface, color, points)
+            elif p.shape == "D":  # Diamond
                 points = [
                     (p.position[0], y_pos - 5),
                     (p.position[0] - 5, y_pos),
                     (p.position[0], y_pos + 5),
                     (p.position[0] + 5, y_pos)
                 ]
-                pygame.draw.polygon(screen, color, points)
+                pygame.draw.polygon(simulation_surface, color, points)
 
-        pygame.display.flip()  # Update display
+        # Draw GUI (right side)
+        gui.draw(screen)
+
+        pygame.display.flip()
         clock.tick(60)  # Maintain 60 FPS
 
-    # ===== CLEAN EXIT =====
     pygame.quit()
+    sys.exit()
 
 if __name__ == "__main__":
-    main()
+    main()  # CRUCIAL: This launches everything
