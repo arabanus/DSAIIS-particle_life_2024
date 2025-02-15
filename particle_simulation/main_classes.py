@@ -101,14 +101,16 @@ class ParticleField:
         """
         pygame.init()
         screen = pygame.display.set_mode((self.width, self.height))
-        clock = pygame.time.Clock()        effect = interaction_effects(self.particles)
+        clock = pygame.time.Clock()
+        effect = interaction_effects(self.particles)
 
         running = True
         while running:
             # Handle events (critical for responsive GUI)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    running = False            for particle in self.particles:
+                    running = False
+            for particle in self.particles:
                 velocity = (
                     random.uniform(-particle.step_size, particle.step_size),  # Movement in the x-direction
                     random.uniform(-particle.step_size, particle.step_size)   # Movement in the y-direction
