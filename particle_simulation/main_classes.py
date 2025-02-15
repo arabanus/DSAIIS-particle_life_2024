@@ -1,7 +1,7 @@
 """Main classes to run the simulation
 """
 import random
-import matplotlib.pyplot as plt
+import pygame
 import math
 from scipy.spatial import cKDTree
 
@@ -99,11 +99,16 @@ class ParticleField:
         """
         Simulates the continuous movement of particles
         """
-        scatter_objects = self.plot_particles(ax)
-        effect = interaction_effects(self.particles)
+        pygame.init()
+        screen = pygame.display.set_mode((self.width, self.height))
+        clock = pygame.time.Clock()        effect = interaction_effects(self.particles)
 
-        while True:
-            for particle in self.particles:
+        running = True
+        while running:
+            # Handle events (critical for responsive GUI)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False            for particle in self.particles:
                 velocity = (
                     random.uniform(-particle.step_size, particle.step_size),  # Movement in the x-direction
                     random.uniform(-particle.step_size, particle.step_size)   # Movement in the y-direction
@@ -117,9 +122,47 @@ class ParticleField:
             effect.attract_particles(interaction_enabled = interaction_options)  # Use the interaction options provided in the __main__ function
             #effect.repel_particles(interaction_enabled = interaction_options) #still to be defined
             
-            # Update the plot
-            self.update_plot(scatter_objects)
-            plt.pause(0.005)  # Pause for the animation
+            # New Pygame rendering
+            screen.fill((0, 0, 0))  # Clear screen
+            for p in self.particles:
+                # Convert coordinates (Matplotlib vs Pygame Y-axis)
+                y_pos = self.height - p.position[1]  # Invert Y-axis
+                color = tuple(int(255 * c) for c in p.color)  # Convert 0-1 → 0-255
+                
+                # Draw based on shape
+                if p.shape == "o":  # Circle
+                    pygame.draw.circle(screen, color, 
+                                     (int(p.position[0]), int(y_pos)), 3)
+                elif p.shape == "s":  # Square
+                    rect = pygame.Rect(p.position[0]-2, y_pos-2, 5, 5)
+                    pygame.draw.rect(screen, color, rect)
+                # ... Add other shape handlers
+    
+            pygame.display.flip()  # Update screen
+            clock.tick(60)  # Enforce 60 FPS cap
+    
+        pygame.quit()
+
+    def create_display(self):
+        pygame.init()
+        self.screen = pygame.display.set_mode((self.width, self.height))
+        self.clock = pygame.time.Clock()
+    
+    # Convert Matplotlib markers to Pygame draw calls
+    def draw_particles(self):
+        self.screen.fill((0, 0, 0))  # Clear screen
+        for p in self.particles:
+            # Convert color from 0-1 range to 0-255
+            color = tuple(int(255 * c) for c in p.color)
+            # Handle different shapes
+            if p.shape == "^":  # Triangle
+                points = self.calculate_triangle_points(p.position)
+                pygame.draw.polygon(self.screen, color, points)
+            elif p.shape == "o":  # Circle
+                pygame.draw.circle(self.screen, color, 
+                                 (int(p.position[0]), int(p.position[1])), 3)
+            # ... similar for other shapes
+        pygame.display.flip()
 
 
 
