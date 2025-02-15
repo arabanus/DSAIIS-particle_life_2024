@@ -5,8 +5,8 @@ import pygame
 import random
 import sys
 from pygame.locals import *
-from main_classes import ParticleField, interaction_effects
-from particle_classes import Particle_A, Particle_B, Particle_C, Particle_D
+from particle_simulation.main_classes import ParticleField, interaction_effects
+from particle_simulation.particle_classes import Particle_A, Particle_B, Particle_C, Particle_D
 from gui import ParticleGUI  # Make sure gui.py is in same directory
 
 def main():
