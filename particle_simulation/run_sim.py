@@ -115,24 +115,6 @@ def main():
             if p.shape == "o":  # Circle
                 pygame.draw.circle(simulation_surface, color, 
                                  (int(p.position[0]), int(y_pos)), 3)
-            elif p.shape == "s":  # Square
-                pygame.draw.rect(simulation_surface, color,
-                                (int(p.position[0]-3), int(y_pos-3), 6, 6))
-            elif p.shape == "^":  # Triangle
-                points = [
-                    (p.position[0], y_pos - 5),
-                    (p.position[0] - 5, y_pos + 5),
-                    (p.position[0] + 5, y_pos + 5)
-                ]
-                pygame.draw.polygon(simulation_surface, color, points)
-            elif p.shape == "D":  # Diamond
-                points = [
-                    (p.position[0], y_pos - 5),
-                    (p.position[0] - 5, y_pos),
-                    (p.position[0], y_pos + 5),
-                    (p.position[0] + 5, y_pos)
-                ]
-                pygame.draw.polygon(simulation_surface, color, points)
 
         # Draw GUI (right side)
         gui.draw(screen)

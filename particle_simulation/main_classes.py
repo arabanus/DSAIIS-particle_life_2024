@@ -142,7 +142,6 @@ class Particle:
         self.particle_label = None                                        # type of the particle (A,B,C,D)
         self.position = position                                          # start position
         self.step_size = None                                             # the step size of the particle in x and y direction
-        #self.movement = (random.uniform(0, 360), random.uniform(2, 5))   # Movement: (angle in degrees, distance)
         self.influence_strength = random.uniform(0, 1)**2                 # Random quadratic strength
         self.influence_radius = None                                      # Radius of influence 
         self.color = None                                                 # color of the particle
