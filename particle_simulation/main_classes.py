@@ -120,31 +120,6 @@ class ParticleField:
         pygame.init()
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.clock = pygame.time.Clock()
-    
-    # Convert Matplotlib markers to Pygame draw calls
-    def draw_particles(self):
-        """
-        Render particles using pygame primitives
-        """
-        self.screen.fill((0, 0, 0))  # Clear screen
-        for p in self.particles:
-            # Convert color from 0-1 range to 0-255
-            color = tuple(int(255 * c) for c in p.color)
-            # Handle different shapes
-            if p.shape == "^":  # Triangle
-                points = self.calculate_triangle_points(p.position)
-                pygame.draw.polygon(self.screen, color, points)
-            elif p.shape == "o":  # Circle
-                pygame.draw.circle(self.screen, color, 
-                                 (int(p.position[0]), int(p.position[1])), 3)
-            # ... similar for other shapes
-        pygame.display.flip()
-
-
-
-
-
-
 
 class Particle:
     """
