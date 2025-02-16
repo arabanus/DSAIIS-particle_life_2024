@@ -1,0 +1,179 @@
+  ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+    28000    0.595    0.000    0.735    0.000 main_classes.py:300(find_particles_within_reactionradius)
+        1    0.234    0.234    0.239    0.239 {built-in method pygame.base.init}
+        7    0.187    0.027    0.653    0.093 main_classes.py:248(repel_particles)
+        7    0.182    0.026    0.628    0.090 main_classes.py:209(attract_particles)
+   532699    0.178    0.000    0.178    0.000 {method 'get' of 'dict' objects}
+        1    0.168    0.168    0.168    0.168 {built-in method pygame.base.quit}
+        1    0.115    0.115    0.115    0.115 {built-in method pygame.display.set_mode}
+    28006    0.109    0.000    0.109    0.000 {method 'reduce' of 'numpy.ufunc' objects}
+        1    0.078    0.078    2.054    2.054 run_sim.py:19(main)
+    36000    0.024    0.000    0.034    0.000 random.py:498(uniform)
+        7    0.022    0.003    0.022    0.003 {built-in method pygame.event.get}
+    56000    0.019    0.000    0.019    0.000 run_sim.py:114(<genexpr>)
+    14028    0.018    0.000    0.018    0.000 {built-in method pygame.draw.circle}
+    28002    0.017    0.000    0.126    0.000 _methods.py:68(_all)
+    36000    0.010    0.000    0.010    0.000 {method 'random' of '_random.Random' objects}
+      126    0.009    0.000    0.009    0.000 {method 'render' of 'pygame.font.Font' objects}
+    28000    0.009    0.000    0.009    0.000 fromnumeric.py:2127(shape)
+     2000    0.008    0.000    0.023    0.000 main_classes.py:151(generate_particle_colors)
+        1    0.007    0.007    0.050    0.050 main_classes.py:29(generate_particles)
+    14000    0.007    0.000    0.007    0.000 main_classes.py:58(move_particle)
+    28000    0.006    0.000    0.006    0.000 fromnumeric.py:2123(_shape_dispatcher)
+        7    0.006    0.001    0.006    0.001 {built-in method pygame.display.flip}
+        2    0.004    0.002    0.005    0.003 main_classes.py:289(build_spatial_index)
+        1    0.003    0.003    0.007    0.007 gui.py:22(__init__)
+        2    0.003    0.002    0.003    0.002 {built-in method _io.open}
+     2000    0.003    0.000    0.006    0.000 main_classes.py:140(__init__)
+     2000    0.003    0.000    0.008    0.000 random.py:345(choice)
+     2000    0.003    0.000    0.005    0.000 random.py:245(_randbelow_with_getrandbits)
+        1    0.003    0.003    0.003    0.003 {built-in method _imp.create_dynamic}
+    10051    0.002    0.000    0.002    0.000 {built-in method builtins.len}
+      526    0.001    0.000    0.008    0.000 particle_classes.py:54(__init__)
+        7    0.001    0.000    0.001    0.000 {method 'fill' of 'pygame.surface.Surface' objects}
+      510    0.001    0.000    0.008    0.000 particle_classes.py:73(__init__)
+      470    0.001    0.000    0.008    0.000 particle_classes.py:15(__init__)
+      494    0.001    0.000    0.010    0.000 particle_classes.py:34(__init__)
+     2000    0.001    0.000    0.001    0.000 {method 'add' of 'set' objects}
+      182    0.001    0.000    0.001    0.000 {method 'blit' of 'pygame.surface.Surface' objects}
+      259    0.001    0.000    0.001    0.000 {built-in method pygame.draw.rect}
+     3929    0.001    0.000    0.001    0.000 {method 'getrandbits' of '_random.Random' objects}
+     2014    0.001    0.000    0.001    0.000 {method 'append' of 'list' objects}
+      526    0.001    0.000    0.002    0.000 main_classes.py:172(<lambda>)
+      510    0.001    0.000    0.002    0.000 main_classes.py:173(<lambda>)
+      494    0.001    0.000    0.005    0.000 main_classes.py:171(<lambda>)
+      470    0.001    0.000    0.003    0.000 main_classes.py:170(<lambda>)
+     2000    0.001    0.000    0.001    0.000 {method 'bit_length' of 'int' objects}
+        7    0.001    0.000    0.001    0.000 {method 'tick' of 'pygame.time.Clock' objects}
+        7    0.000    0.000    0.008    0.001 gui.py:133(draw_interaction_matrix)
+        1    0.000    0.000    0.000    0.000 {built-in method _io.open_code}
+        5    0.000    0.000    0.000    0.000 {built-in method nt.stat}
+       28    0.000    0.000    0.000    0.000 {built-in method pygame.draw.line}
+        7    0.000    0.000    0.002    0.000 gui.py:170(draw_repulsion_matrix)
+        7    0.000    0.000    0.002    0.000 gui.py:205(draw_sliders)
+        4    0.000    0.000    0.001    0.000 fromnumeric.py:69(_wrapreduction)
+        1    0.000    0.000    0.000    0.000 {built-in method pygame.display.set_caption}
+        7    0.000    0.000    0.001    0.000 gui.py:231(draw_buttons)
+        7    0.000    0.000    0.013    0.002 gui.py:106(draw)
+        1    0.000    0.000    0.000    0.000 {method 'read' of '_io.BufferedReader' objects}
+        7    0.000    0.000    0.000    0.000 {method 'subsurface' of 'pygame.surface.Surface' objects}
+        6    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:101(_path_join)
+       28    0.000    0.000    0.000    0.000 {method 'get_rect' of 'pygame.surface.Surface' objects}
+        2    0.000    0.000    0.005    0.003 main_classes.py:203(__init__)
+        2    0.000    0.000    0.004    0.002 pkgdata.py:45(getResource)
+      2/1    0.000    0.000    0.004    0.004 <frozen importlib._bootstrap>:1349(_find_and_load)
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+        1    0.000    0.000    0.000    0.000 gui.py:72(create_controls)
+        2    0.000    0.000    0.001    0.000 <frozen importlib._bootstrap_external>:1624(find_spec)
+        2    0.000    0.000    0.000    0.000 <frozen ntpath>:222(split)
+        1    0.000    0.000    0.000    0.000 {built-in method marshal.loads}
+        2    0.000    0.000    0.001    0.000 <frozen importlib._bootstrap>:1240(_find_spec)
+        2    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:304(acquire)
+        2    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:426(_get_module_lock)
+        1    0.000    0.000    0.001    0.001 <frozen importlib._bootstrap_external>:1093(get_code)
+      2/1    0.000    0.000    0.004    0.004 <frozen importlib._bootstrap>:1304(_find_and_load_unlocked)
+        1    0.000    0.000    0.054    0.054 main_classes.py:21(__init__)
+        1    0.000    0.000    0.000    0.000 {method '__exit__' of '_io._IOBase' objects}
+       24    0.000    0.000    0.000    0.000 gui.py:256(handle_input)
+        2    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:74(__new__)
+      2/1    0.000    0.000    0.004    0.004 <frozen importlib._bootstrap>:911(_load_unlocked)
+        2    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:833(spec_from_file_location)
+        2    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:733(_init_module_attrs)
+        2    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:513(cache_from_source)
+        2    0.000    0.000    0.001    0.000 fromnumeric.py:3203(amax)
+        4    0.000    0.000    0.000    0.000 {built-in method numpy.array}
+        1    0.000    0.000    0.003    0.003 freetype.py:1(<module>)
+        2    0.000    0.000    0.000    0.000 <frozen ntpath>:99(join)
+      5/2    0.000    0.000    0.003    0.001 <frozen importlib._bootstrap>:480(_call_with_frames_removed)
+        2    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1619(_get_spec)
+        2    0.000    0.000    0.001    0.000 <frozen importlib._bootstrap_external>:1522(_get_spec)
+        2    0.000    0.000    0.003    0.001 <frozen importlib._bootstrap>:806(module_from_spec)
+       22    0.000    0.000    0.000    0.000 {method 'rstrip' of 'str' objects}
+        1    0.000    0.000    0.001    0.001 <frozen importlib._bootstrap_external>:1214(get_data)
+        2    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:124(setdefault)
+        6    0.000    0.000    0.000    0.000 {built-in method nt._path_splitroot_ex}
+        2    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:162(__enter__)
+       27    0.000    0.000    0.000    0.000 {method 'endswith' of 'str' objects}
+        2    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:416(__enter__)
+        2    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:137(_path_split)
+        2    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:177(_path_isabs)
+        1    0.000    0.000    0.004    0.004 <frozen importlib._bootstrap_external>:1020(exec_module)
+        2    0.000    0.000    0.000    0.000 fromnumeric.py:3347(amin)
+       14    0.000    0.000    0.000    0.000 {built-in method builtins.getattr}
+        2    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:642(_get_cached)
+       16    0.000    0.000    0.000    0.000 {method 'startswith' of 'str' objects}
+        2    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:372(release)
+       10    0.000    0.000    0.000    0.000 {method 'rpartition' of 'str' objects}
+        2    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:232(__init__)
+        4    0.000    0.000    0.000    0.000 _function_base_impl.py:908(copy)
+       11    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:653(has_location)
+        2    0.000    0.000    0.000    0.000 {built-in method builtins.max}
+        2    0.000    0.000    0.000    0.000 <frozen ntpath>:261(dirname)
+        2    0.000    0.000    0.000    0.000 {built-in method _imp.is_builtin}
+        5    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:145(_path_stat)
+        2    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:82(remove)
+        8    0.000    0.000    0.000    0.000 {built-in method builtins.isinstance}
+        2    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:79(__init__)
+        8    0.000    0.000    0.000    0.000 {method 'join' of 'str' objects}
+        6    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:139(<genexpr>)
+        1    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:782(_compile_bytecode)
+        3    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:89(_unpack_uint32)
+        1    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:697(_classify_pyc)
+        2    0.000    0.000    0.001    0.000 <frozen importlib._bootstrap_external>:1551(find_spec)
+        1    0.000    0.000    0.003    0.003 <frozen importlib._bootstrap_external>:1318(create_module)
+        4    0.000    0.000    0.000    0.000 {method 'items' of 'dict' objects}
+        1    0.000    0.000    0.003    0.003 {built-in method builtins.exec}
+        8    0.000    0.000    0.000    0.000 {built-in method nt.fspath}
+        3    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:632(cached)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:491(_verbose_message)
+        1    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:48(_new_module)
+        2    0.000    0.000    0.000    0.000 <frozen ntpath>:34(_get_bothseps)
+        2    0.000    0.000    0.000    0.000 {built-in method nt._path_splitroot}
+        1    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:674(_check_name_wrapper)
+        2    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:164(_path_isfile)
+        2    0.000    0.000    0.000    0.000 {built-in method nt._path_normpath}
+        2    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:420(__exit__)
+        2    0.000    0.000    0.000    0.000 {built-in method builtins.setattr}
+        2    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:155(_path_is_mode_type)
+       10    0.000    0.000    0.000    0.000 {built-in method _imp.acquire_lock}
+        2    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:173(__exit__)
+        2    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:445(cb)
+        2    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:1128(find_spec)
+        2    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:982(find_spec)
+       10    0.000    0.000    0.000    0.000 {built-in method _imp.release_lock}
+        2    0.000    0.000    0.000    0.000 {built-in method _imp.find_frozen}
+        6    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:1226(__exit__)
+        4    0.000    0.000    0.000    0.000 {built-in method builtins.hasattr}
+        6    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:1222(__enter__)
+        1    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:730(_validate_timestamp_pyc)
+        2    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:190(_path_abspath)
+        2    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:645(parent)
+        2    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:67(_relax_case)
+        4    0.000    0.000    0.000    0.000 {built-in method _thread.get_ident}
+        2    0.000    0.000    0.000    0.000 {method 'remove' of 'list' objects}
+        4    0.000    0.000    0.000    0.000 {method 'rfind' of 'str' objects}
+        2    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1500(_path_importer_cache)
+        4    0.000    0.000    0.000    0.000 {method '__exit__' of '_thread.RLock' objects}
+        2    0.000    0.000    0.000    0.000 {method 'replace' of 'str' objects}
+        2    0.000    0.000    0.000    0.000 {built-in method _weakref._remove_dead_weakref}
+        2    0.000    0.000    0.000    0.000 {method 'pop' of 'dict' objects}
+        3    0.000    0.000    0.000    0.000 {built-in method from_bytes}
+        1    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1326(exec_module)
+        2    0.000    0.000    0.000    0.000 {built-in method __new__ of type object at 0x00007FF92E0428A0}
+        1    0.000    0.000    0.000    0.000 {built-in method math.ceil}
+        4    0.000    0.000    0.000    0.000 {method 'pop' of 'list' objects}
+        2    0.000    0.000    0.000    0.000 {built-in method _thread.allocate_lock}
+        2    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:599(__init__)
+        1    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1233(path_stats)
+        2    0.000    0.000    0.000    0.000 fromnumeric.py:3075(_max_dispatcher)
+        4    0.000    0.000    0.000    0.000 _function_base_impl.py:904(_copy_dispatcher)
+        2    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:412(__init__)
+        2    0.000    0.000    0.000    0.000 pkgdata.py:28(resource_exists)
+        2    0.000    0.000    0.000    0.000 fromnumeric.py:3220(_min_dispatcher)
+        1    0.000    0.000    0.000    0.000 {built-in method _imp._fix_co_filename}
+        1    0.000    0.000    0.000    0.000 {built-in method _imp.exec_dynamic}
+        2    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:158(__init__)
+        1    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1184(__init__)
+        1    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1017(create_module)
+        1    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1307(__init__)
+        1    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1209(get_filename)
