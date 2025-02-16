@@ -34,11 +34,11 @@ jobs:
         pip install pytest
 
     - name: Set PYTHONPATH (Linux/macOS)
-      if: runner.os != 'Windows'
+      if: runner.os != 'windows-latest'
       run: echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
 
     - name: Set PYTHONPATH (Windows)
-      if: runner.os == 'Windows'
+      if: runner.os == 'windows-latest'
       run: echo "PYTHONPATH=${{ github.workspace }}" >> $GITHUB_ENV
       shell: bash
 
