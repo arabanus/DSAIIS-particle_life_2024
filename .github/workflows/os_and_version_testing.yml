@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ["3.8", "3.9", "3.10"] #, "3.12"]
+        python-version: ["3.8", "3.9", "3.10"]
 
     steps:
     - name: Check out repository
@@ -31,7 +31,8 @@ jobs:
 
     - name: Lint with Ruff
       run: |
-        ruff check --fix
+        ruff --version  # Verifying installation first
+        ruff check ./tests ./particle_simulation --fix
 
     - name: Run tests with pytest
       run: |
