@@ -1,5 +1,3 @@
-"""Main classes to run the simulation
-"""
 import random
 import pygame
 import math
@@ -337,6 +335,7 @@ class interaction_effects:
         """ 
         positions = [p.position for p in self.particles]
         self.spatial_tree = cKDTree(positions)
+
 
     def find_particles_within_reactionradius(self, main_particle):
         """Find particles within influence radius of given particle.
