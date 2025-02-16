@@ -3,6 +3,15 @@
 from particle_simulation.main_classes import Particle, ParticleField
 
 class Particle_A(Particle):
+    """
+    Red-colored particles with medium influence range.
+    
+    Attributes:
+        step_size (0.2): Base movement speed
+        influence_strength (0.5): Moderate attraction/repulsion force
+        influence_radius (25): Medium detection radius
+        color: Generated red-dominated color
+    """
     def __init__(self, position):
         super().__init__(position)
         self.particle_label = "Particle_A"
@@ -14,6 +23,14 @@ class Particle_A(Particle):
 
 
 class Particle_B(Particle):
+    """
+    Green-colored particles with stronger influence.
+    
+    Attributes:
+        influence_strength (1.0): Stronger interaction force
+        influence_radius (50): Larger detection radius
+        color: Generated green-dominated color
+    """
     def __init__(self, position):
         super().__init__(position)
         self.particle_label = "Particle_B"
@@ -26,6 +43,14 @@ class Particle_B(Particle):
 
 
 class Particle_C(Particle):
+    """
+    Blue-colored particles with maximum influence.
+    
+    Attributes:
+        influence_strength (5.0): Very strong interaction force
+        influence_radius (75): Largest detection radius
+        color: Generated blue-dominated color
+    """
     def __init__(self, position):
         super().__init__(position)
         self.particle_label = "Particle_C"
@@ -37,6 +62,14 @@ class Particle_C(Particle):
 
 
 class Particle_D(Particle):
+    """
+    Yellow-colored particles with maximum influence.
+    
+    Attributes:
+        influence_strength (5.0): Very strong interaction force
+        influence_radius (75): Largest detection radius
+        color: Generated yellow-dominated color
+    """
     def __init__(self, position):
         super().__init__(position)
         self.particle_label = "Particle_D"

@@ -17,6 +17,22 @@ import sys
 
 
 def main():
+    """Main simulation loop integrating Pygame GUI and particle physics.
+    
+    Execution flow:
+    1. Initialize Pygame and create window
+    2. Set up GUI controls on right panel
+    3. Create initial particle field
+    4. Enter main loop:
+        a) Process input events
+        b) Update simulation parameters from GUI
+        c) Calculate particle movement
+        d) Apply interaction forces
+        e) Render particles and GUI
+    5. Clean up on exit
+    
+    Handles real-time parameter adjustments and smooth rendering at 60 FPS.
+    """
     # ===== PYGAME INIT ===== 
     pygame.init()
     screen_width = 1200  # Wider to accommodate GUI

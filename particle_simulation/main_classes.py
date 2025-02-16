@@ -8,6 +8,18 @@ from scipy.spatial import cKDTree
 
 
 class ParticleField:
+    """
+    Main container for handling all particle interactions.
+
+    Handles the generation and positioning of particles and display updates.
+    Manages interactions between different particle types
+
+    Attributes:
+        - width: width of the particle field
+        - height: height of the particle field
+        - num_particles: number of particles participating in the simulation
+        - particles: list of all partile instances in the field
+    """
     def __init__(self, width, height, num_particles):
         self.width = width
         self.height = height
@@ -18,7 +30,12 @@ class ParticleField:
 
     def generate_particles(self):
         """
-        Generates particles distributed evenly on a grid
+        Creates particles arranged in a grid pattern with random types
+
+        This method generates particles using 3 rules:
+        - distributes particles evenly along a grid
+        - randomly assigns particle types A, B, C or D
+        - makes sure that the total count is equal to num_particles parameter
         """
         from particle_simulation.particle_classes import Particle_A, Particle_B, Particle_C, Particle_D  #lazy import to avoid loop
 
@@ -42,29 +59,23 @@ class ParticleField:
 
     @staticmethod
     def move_particle(particle, velocity, width, height):
-        """updates the particles position 
-        Args:
-        particle: the particles position
-        velocity: A randomly generated value within the range defined by self.speed, determining the small incremental steps for the particle's movement
-        width, height: the width and height of the field
+        """
+        Updates the particles position
+        When a particle reaches an edge it is wrapped around using modulo of the field size
         
+        Args:
+            - particle: particle to move
+            - velocity: movement vector of the particle
+            - width: screen width for wraparound
+            - height: screen height for wraparound
+
+        Returns:
+            - tuple: new particle position
         """
         new_x = (particle[0] + velocity[0]) % width
         new_y = (particle[1] + velocity[1]) % height
         return (new_x, new_y)
 
-
-
-    def update_plot(self, scatter_objects):
-        """
-        Updates the scatter plots with new particle positions for each shape.
-        """
-        for shape, scatter in scatter_objects.items():
-            # Update the scatter plot for the current shape
-            scatter.set_offsets([
-                (particle.position[0], particle.position[1])
-                for particle in self.particles if particle.shape == shape
-            ])
 
 
 
@@ -119,12 +130,18 @@ class ParticleField:
         pygame.quit()
 
     def create_display(self):
+        """
+        Initalizes Pygame display instance for particle rendering
+        """
         pygame.init()
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.clock = pygame.time.Clock()
     
     # Convert Matplotlib markers to Pygame draw calls
     def draw_particles(self):
+        """
+        Render particles using pygame primitives
+        """
         self.screen.fill((0, 0, 0))  # Clear screen
         for p in self.particles:
             # Convert color from 0-1 range to 0-255
@@ -146,6 +163,21 @@ class ParticleField:
 
 
 class Particle:
+    """
+    Base class representing a single particle in the simulation.
+    
+    Defines common properties and methods for all particle types.
+    Is subclassed for specific particle behaviors.
+    
+    Attributes:
+        - position: Current coordinates
+        - step_size: Base movement speed per frame
+        - influence_strength: Force magnitude for interactions
+        - influence_radius: Detection range for other particles
+        - color: RGB color values
+        - shape: Symbol representing particle shape
+        - particle_label: Type identifier
+    """
     def __init__(self, position):
         # Basic properties of the particle (actual values to be given in the child classes)
         self.particle_label = None                                        # type of the particle (A,B,C,D)
@@ -161,14 +193,20 @@ class Particle:
     @staticmethod
     def generate_particle_colors(particle_type, iterations):
         """
-        Generates unique colors based on particle type, ensuring no duplicates within the type.
-
+        Generate unique color variations for particle types.
+        
+        Uses different color schemes per particle type:
+        - A: Red-dominated colors
+        - B: Green-dominated colors
+        - C: Blue-dominated colors
+        - D: Yellow/Orange colors
+        
         Args:
-            particle_type (str): The type of particle (e.g., 'Particle_A').
-            iterations (int): Number of colors to generate.
-
+            - particle_type: Particle class name to generate colors for
+            - iterations: Number of unique colors needed
+            
         Returns:
-            list: A list of unique colors for the given particle type.
+            - list: Unique RGB tuples in 0-1 range
         """
         color_schemes = {
             "Particle_A": lambda: (random.uniform(0.6, 1.0), random.uniform(0, 0.4), random.uniform(0, 0.4)),
@@ -195,6 +233,15 @@ class Particle:
 
 
 class interaction_effects:
+    """Manager class for particle interaction physics.
+    
+    Handles both attraction and repulsion forces between particles
+    using spatial indexing for efficient neighbor detection.
+    
+    Attributes:
+        particles: Reference to master particle list
+        spatial_tree: Spatial index for neighbor queries
+    """
     def __init__(self, particles, width, height):
         self.particles = particles
         self.build_spatial_index()
@@ -282,12 +329,24 @@ class interaction_effects:
 
 
     def build_spatial_index(self):
-        """Builds a spatial index to get all particles positions using cKDTree"""
+        """
+        Rebuild spatial index tree for neighbor detection.
+        
+        Should be called before any interaction calculations.
+        Uses scipy's cKDTree for O(log n) nearest neighbor queries.
+        """ 
         positions = [p.position for p in self.particles]
         self.spatial_tree = cKDTree(positions)
 
     def find_particles_within_reactionradius(self, main_particle):
-        """Finds neighbors within the reaction radius using an efficient cKDTree model"""
+        """Find particles within influence radius of given particle.
+        
+        Args:
+            main_particle (Particle): Center particle for search
+            
+        Returns:
+            list: Nearby Particle instances (excluding self)
+        """        
         neighbors_idx = self.spatial_tree.query_ball_point(main_particle.position, main_particle.influence_radius)
 
         return [self.particles[i] for i in neighbors_idx if self.particles[i] != main_particle] #exclude the particle it self ad a neighbor
