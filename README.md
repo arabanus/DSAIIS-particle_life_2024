@@ -132,6 +132,7 @@ by Mohamad Aimesh, Jasmin Al Karawani, Julia Moor, Dalia Salih, Anton Rabanus.
 - **Results:**  
   With these strategies, the simulator reliably maintains 60 FPS under typical conditions, despite the inherent limitations of CPU-bound rendering.
 
+![Optimization Quality](https://raw.githubusercontent.com/arabanus/DSAIIS-particle_life_2024/blob/readme_for_abgabe/optimization_quality.png)
 ![Optimization Quality](optimization quality.png)
 
 ---
