@@ -53,7 +53,11 @@ def main():
 
     # ===== MAIN LOOP =====
     running = True
+    frame_counter = 0  # count Frames
+
     while running:
+        frame_counter += 1  
+
         # === Handle Events ===
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -82,7 +86,7 @@ def main():
 
         # === Physics Update ===
         if not paused:
-            # Random movement
+            # random movement
             for particle in field.particles:
                 velocity = (
                     random.uniform(-particle.step_size, particle.step_size),
@@ -92,35 +96,32 @@ def main():
                     particle.position, velocity, simulation_width, screen_height
                 )
 
-            # Particle interactions
-            effect.build_spatial_index()
-            effect.repel_particles(gui.repulsion_matrix)  # Abstoßung berechnen
-            effect.attract_particles(gui.interaction_matrix)  # Anziehung berechnen
+            # only after each 30 Frames build special index
+            if frame_counter % 30 == 0:  
+                effect.build_spatial_index()
 
-
+            # Particle interaktion
+            effect.repel_particles(gui.repulsion_matrix)
+            effect.attract_particles(gui.interaction_matrix)
 
         # === Rendering ===
-        screen.fill((0, 0, 0))  # Clear screen
+        screen.fill((0, 0, 0))  
 
-        # Draw simulation area (left side)
+        # draw particle
         simulation_surface = screen.subsurface((0, 0, simulation_width, screen_height))
         for p in field.particles:
-            # Coordinate conversion for Pygame's Y-axis
             y_pos = screen_height - p.position[1]
-            
-            # Color conversion (Matplotlib to Pygame)
             color = tuple(int(255 * c) for c in p.color)
-            
-            # Shape drawing
-            if p.shape == "o":  # Circle
-                pygame.draw.circle(simulation_surface, color, 
-                                 (int(p.position[0]), int(y_pos)), 3)
 
-        # Draw GUI (right side)
+            if p.shape == "o":
+                pygame.draw.circle(simulation_surface, color, 
+                                (int(p.position[0]), int(y_pos)), 3)
+
+
         gui.draw(screen)
 
         pygame.display.flip()
-        clock.tick(60)  # Maintain 60 FPS
+        clock.tick(60)
 
     pygame.quit()
     sys.exit()
