@@ -1,5 +1,3 @@
----
-
 # Particle Simulator
 
 *Biology-Inspired Emergent Particle Simulation*  

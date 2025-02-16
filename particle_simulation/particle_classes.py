@@ -77,36 +77,3 @@ class Particle_D(Particle):
         self.influence_strength = 0
         self.influence_radius = 100
         self.color = Particle.generate_particle_colors(self.particle_label, 1)[0]  #gets a colorway for this spicific type
-        
-
-
-
-
-
-
-
-if __name__ == "__main__":
-    
-    field = ParticleField(width=200, height=200, num_particles=2000)
-    fig, ax = field.create_field()
-
-    try:
-        field.start_movement(ax, {
-                                        "A_A": True,
-                                        "A_B": False,
-                                        "A_C": False,
-                                        "A_D": False,
-                                        "B_B": False,
-                                        "B_C": False,
-                                        "B_D": False,
-                                        "C_C": False,
-                                        "C_D": False,
-                                        "D_D": False
-                                    })
-
-    except KeyboardInterrupt:
-        print("\nended simulation")
-
-
-
-#use in terminal to run script   -----------> python -m particle_simulation.particle_classes <-----------
