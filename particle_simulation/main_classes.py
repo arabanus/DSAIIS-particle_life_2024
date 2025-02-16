@@ -13,6 +13,7 @@ class ParticleField:
         self.height = height
         self.num_particles = num_particles
         self.particles = self.generate_particles()
+        self.interactions = interaction_effects(self.particles, self.width, self.height)
 
 
     def generate_particles(self):
@@ -74,7 +75,7 @@ class ParticleField:
         pygame.init()
         screen = pygame.display.set_mode((self.width, self.height))
         clock = pygame.time.Clock()
-        effect = interaction_effects(self.particles)
+        effect = interaction_effects(self.particles, self.width, self.height)
 
         running = True
         while running:
@@ -154,7 +155,8 @@ class Particle:
         self.influence_strength = random.uniform(0, 1)**2                 # Random quadratic strength
         self.influence_radius = None                                      # Radius of influence 
         self.color = None                                                 # color of the particle
-        self.shape= "o"                                           
+        self.shape= "o"
+        self.min_distance = 5                                             # Minimum distance between particles to avoid overlap                                           
     
     @staticmethod
     def generate_particle_colors(particle_type, iterations):
@@ -193,9 +195,11 @@ class Particle:
 
 
 class interaction_effects:
-    def __init__(self, particles):
+    def __init__(self, particles, width, height):
         self.particles = particles
         self.build_spatial_index()
+        self.width = width
+        self.height = height
 
     def attract_particles(self, interaction_enabled):
 
@@ -220,11 +224,17 @@ class interaction_effects:
                     if distance > 0:
                         dx /= distance
                         dy /= distance
+                    else:
+                        dx = 0
+                        dy = 0
 
                     influence = particle.influence_strength
+                    if distance - influence < particle.min_distance: # Prüfen, dass Partikel nicht überrlappen
+                        influence = max(0, abs(distance - particle.min_distance))
+                    
                     particle.position = (
-                        particle.position[0] + dx * influence,
-                        particle.position[1] + dy * influence
+                        (particle.position[0] + dx * influence) % self.width, # Wrap für X- und Y-Koordinaten
+                        (particle.position[1] + dy * influence) % self.height
                     )
                 else:
                     continue  #Skip if interaction is disabled
@@ -252,13 +262,20 @@ class interaction_effects:
                     if distance > 0:
                         dx /= distance
                         dy /= distance
+                    else:
+                        dx = 0
+                        dy = 0
 
-                    # Bewegung umkehren (Repulsion)
                     influence = particle.influence_strength
+                    if distance - influence < particle.min_distance: # Prüfen, dass Partikel nicht überrlappen
+                        influence = max(0, abs(distance - particle.min_distance))
+
                     particle.position = (
-                        particle.position[0] - dx * influence,
-                        particle.position[1] - dy * influence
+                        (particle.position[0] - dx * influence) % self.width, # Umgekehrte Bewegung
+                        (particle.position[1] - dy * influence) % self.height # Wrap für X- und Y-Koordinaten
                     )
+                else:
+                    continue  #Skip if interaction is disabled
 
                     
             

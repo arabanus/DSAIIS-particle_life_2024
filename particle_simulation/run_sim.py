@@ -32,7 +32,7 @@ def main():
 
     # ===== SIMULATION INIT =====
     field = ParticleField(simulation_width, screen_height, gui.params['num_particles'])
-    effect = interaction_effects(field.particles)
+    effect = interaction_effects(field.particles, width=simulation_width, height=screen_height)
     paused = False
 
     # ===== MAIN LOOP =====
@@ -58,7 +58,7 @@ def main():
         # Reset simulation if requested
         if gui.params.get('reset'):
             field = ParticleField(simulation_width, screen_height, gui.params['num_particles'])
-            effect = interaction_effects(field.particles)
+            effect = interaction_effects(field.particles, width=simulation_width, height=screen_height)
             gui.params['reset'] = False
 
         # Pause state

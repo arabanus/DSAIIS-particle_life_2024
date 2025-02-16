@@ -89,6 +89,8 @@ class ParticleGUI:
         matrix = self.controls['matrix']
         start_x = self.screen_width - self.gui_width + matrix['x']
         start_y = matrix['y']
+        title_text = self.font.render("Interaction Matrix", True, self.colors['text'])
+        screen.blit(title_text, (start_x, start_y - 40))  # Position der Überschrift
         
         # Draw labels
         for i, p in enumerate(matrix['particles']):
@@ -113,6 +115,9 @@ class ParticleGUI:
         matrix = self.controls['matrix']
         start_x = self.screen_width - self.gui_width + matrix['x']
         start_y = matrix['y'] + 200  # Position unter der ersten Matrix
+        title_text = self.font.render("Repulsion Matrix", True, self.colors['text'])
+        screen.blit(title_text, (start_x, start_y - 40))  # Position der Überschrift
+
         
         # Labels zeichnen
         for i, p in enumerate(matrix['particles']):
