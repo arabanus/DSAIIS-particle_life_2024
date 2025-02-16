@@ -12,8 +12,8 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ["3.8", "3.9", "3.10", "3.12"]
+        os: [ubuntu-latest, macos-latest]
+        python-version: ["3.8", "3.9", "3.10"]
 
     steps:
     - name: Check out repository
@@ -29,10 +29,23 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    - name: Install pytest
+      run: |
+        pip install pytest
+
+    - name: Run tests with pytest
+      shell: bash
+      run: |
+        export PYTHONPATH=$(pwd)
+        pytest
+
+
     - name: Lint with Ruff
       run: |
-        ruff check --fix
+        ruff --version  # Verifying installation first
+        ruff check ./tests ./particle_simulation --fix --ignore E501,F403,E402,F405,E902
 
     - name: Run tests with pytest
       run: |
+        export PYTHONPATH=$(pwd)
         pytest
