@@ -77,7 +77,7 @@ class ParticleField:
 
 
 
-    def start_movement(self, ax, interaction_options):
+    def start_movement(self, interaction_options):
         """
         Simulates the continuous movement of particles
         """
@@ -108,20 +108,6 @@ class ParticleField:
             
             # New Pygame rendering
             screen.fill((0, 0, 0))  # Clear screen
-            for p in self.particles:
-                # Convert coordinates (Matplotlib vs Pygame Y-axis)
-                y_pos = self.height - p.position[1]  # Invert Y-axis
-                color = tuple(int(255 * c) for c in p.color)  # Convert 0-1 → 0-255
-                
-                # Draw based on shape
-                if p.shape == "o":  # Circle
-                    pygame.draw.circle(screen, color, 
-                                     (int(p.position[0]), int(y_pos)), 3)
-                elif p.shape == "s":  # Square
-                    rect = pygame.Rect(p.position[0]-2, y_pos-2, 5, 5)
-                    pygame.draw.rect(screen, color, rect)
-                # ... Add other shape handlers
-    
             pygame.display.flip()  # Update screen
             clock.tick(60)  # Enforce 60 FPS cap
     
@@ -134,31 +120,6 @@ class ParticleField:
         pygame.init()
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.clock = pygame.time.Clock()
-    
-    # Convert Matplotlib markers to Pygame draw calls
-    def draw_particles(self):
-        """
-        Render particles using pygame primitives
-        """
-        self.screen.fill((0, 0, 0))  # Clear screen
-        for p in self.particles:
-            # Convert color from 0-1 range to 0-255
-            color = tuple(int(255 * c) for c in p.color)
-            # Handle different shapes
-            if p.shape == "^":  # Triangle
-                points = self.calculate_triangle_points(p.position)
-                pygame.draw.polygon(self.screen, color, points)
-            elif p.shape == "o":  # Circle
-                pygame.draw.circle(self.screen, color, 
-                                 (int(p.position[0]), int(p.position[1])), 3)
-            # ... similar for other shapes
-        pygame.display.flip()
-
-
-
-
-
-
 
 class Particle:
     """
@@ -181,7 +142,6 @@ class Particle:
         self.particle_label = None                                        # type of the particle (A,B,C,D)
         self.position = position                                          # start position
         self.step_size = None                                             # the step size of the particle in x and y direction
-        #self.movement = (random.uniform(0, 360), random.uniform(2, 5))   # Movement: (angle in degrees, distance)
         self.influence_strength = random.uniform(0, 1)**2                 # Random quadratic strength
         self.influence_radius = None                                      # Radius of influence 
         self.color = None                                                 # color of the particle
