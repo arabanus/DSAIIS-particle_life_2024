@@ -309,5 +309,3 @@ class interaction_effects:
         neighbors_idx = self.spatial_tree.query_ball_point(main_particle.position, main_particle.influence_radius)
 
         return [self.particles[i] for i in neighbors_idx if self.particles[i] != main_particle] #exclude the particle it self ad a neighbor
-
-

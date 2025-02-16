@@ -42,20 +42,22 @@ class ParticleGUI:
             'active': (100, 150, 200)
         }
         
-        # Interaction matrix state
+        # Interaction matrix state (full 4x4 for attraction)
         self.interaction_matrix = {
             'A_A': False, 'A_B': False, 'A_C': False, 'A_D': False,
-            'B_B': False, 'B_C': False, 'B_D': False,
-            'C_C': False, 'C_D': False, 'D_D': False
+            'B_A': False, 'B_B': False, 'B_C': False, 'B_D': False,
+            'C_A': False, 'C_B': False, 'C_C': False, 'C_D': False,
+            'D_A': False, 'D_B': False, 'D_C': False, 'D_D': False
         }
 
+        # Repulsion matrix state (now full 4x4)
         self.repulsion_matrix = {
             'A_A': False, 'A_B': False, 'A_C': False, 'A_D': False,
-            'B_B': False, 'B_C': False, 'B_D': False,
-            'C_C': False, 'C_D': False, 'D_D': False
+            'B_A': False, 'B_B': False, 'B_C': False, 'B_D': False,
+            'C_A': False, 'C_B': False, 'C_C': False, 'C_D': False,
+            'D_A': False, 'D_B': False, 'D_C': False, 'D_D': False
         }
 
-        
         # Parameter defaults
         self.params = {
             'num_particles': 2000,
@@ -73,7 +75,7 @@ class ParticleGUI:
         Creates three main control sections:
         1. Interaction matrices (attraction and repulsion grids)
         2. Parameter sliders (number of particles, speed, radius, strength)
-        3. Control buttons (reset, pause)
+        3. Control buttons (reset, pause, repulsion, attract)
         
         Stores geometry in self.controls dictionary for later drawing.
         """
@@ -92,10 +94,12 @@ class ParticleGUI:
                 {'label': "Strength", 'min': 0.1, 'max': 1.0, 'value': 0.5, 'y': 650}
             ],
             
-            # Buttons
+            # Buttons (added Repulsion and Attract)
             'buttons': [
                 {'label': "Reset", 'rect': pygame.Rect(990, 700, 120, 40)},
-                {'label': "Pause", 'rect': pygame.Rect(990, 750, 120, 40)} 
+                {'label': "Pause", 'rect': pygame.Rect(990, 750, 120, 40)},
+                {'label': "Repulsion", 'rect': pygame.Rect(990, 800, 120, 40)},
+                {'label': "Attract", 'rect': pygame.Rect(990, 850, 120, 40)}
             ]
         }
 
@@ -113,10 +117,10 @@ class ParticleGUI:
         """
         # Draw background panel
         pygame.draw.rect(screen, self.colors['background'], 
-                        (self.screen_width - self.gui_width, 0, 
-                         self.gui_width, self.screen_height))
+                         (self.screen_width - self.gui_width, 0, 
+                          self.gui_width, self.screen_height))
         
-        # Draw interaction matrix
+        # Draw interaction matrices
         self.draw_interaction_matrix(screen)
         self.draw_repulsion_matrix(screen)
 
@@ -150,25 +154,25 @@ class ParticleGUI:
             screen.blit(text, (start_x + i * matrix['cell_size'], start_y - 20))
             screen.blit(text, (start_x - 20, start_y + i * matrix['cell_size']))
         
-        # Draw grid
+        # Draw grid (full 4x4)
         for i, p1 in enumerate(matrix['particles']):
             for j, p2 in enumerate(matrix['particles']):
-                if j >= i:  # Upper triangle only
-                    rect = pygame.Rect(
-                        start_x + j * matrix['cell_size'],
-                        start_y + i * matrix['cell_size'],
-                        matrix['cell_size'] - 2,
-                        matrix['cell_size'] - 2
-                    )
-                    key = f"{p1}_{p2}"
-                    color = self.colors['active'] if self.interaction_matrix[key] else self.colors['button']
-                    pygame.draw.rect(screen, color, rect)
+                rect = pygame.Rect(
+                    start_x + j * matrix['cell_size'],
+                    start_y + i * matrix['cell_size'],
+                    matrix['cell_size'] - 2,
+                    matrix['cell_size'] - 2
+                )
+                key = f"{p1}_{p2}"
+                color = self.colors['active'] if self.interaction_matrix[key] else self.colors['button']
+                pygame.draw.rect(screen, color, rect)
 
     def draw_repulsion_matrix(self, screen):
         """Render the lower matrix controlling repulsion between particles.
         
-        Identical layout to attraction matrix but positioned 200px lower.
-        Uses same color scheme but tracks separate interaction states.
+        Visual layout:
+        - Full 4x4 grid (A-D x A-D) positioned 200px lower than the attraction matrix.
+        - Uses the same color scheme but tracks separate repulsion interaction states.
         
         Args:
             screen (pygame.Surface): Surface to draw matrix on
@@ -177,7 +181,7 @@ class ParticleGUI:
         start_x = self.screen_width - self.gui_width + matrix['x']
         start_y = matrix['y'] + 200
         title_text = self.font.render("Repulsion", True, self.colors['text'])
-        screen.blit(title_text, (start_x + 170 , start_y + 70)) # Title position next to matrix
+        screen.blit(title_text, (start_x + 170, start_y + 70)) # Title position next to matrix
 
         # Draw labels
         for i, p in enumerate(matrix['particles']):
@@ -185,19 +189,18 @@ class ParticleGUI:
             screen.blit(text, (start_x + i * matrix['cell_size'], start_y - 20))
             screen.blit(text, (start_x - 20, start_y + i * matrix['cell_size']))
         
-        # Draw grid
+        # Draw full grid (full 4x4)
         for i, p1 in enumerate(matrix['particles']):
             for j, p2 in enumerate(matrix['particles']):
-                if j >= i:
-                    rect = pygame.Rect(
-                        start_x + j * matrix['cell_size'],
-                        start_y + i * matrix['cell_size'],
-                        matrix['cell_size'] - 2,
-                        matrix['cell_size'] - 2
-                    )
-                    key = f"{p1}_{p2}"
-                    color = self.colors['active'] if self.repulsion_matrix[key] else self.colors['button']
-                    pygame.draw.rect(screen, color, rect)
+                rect = pygame.Rect(
+                    start_x + j * matrix['cell_size'],
+                    start_y + i * matrix['cell_size'],
+                    matrix['cell_size'] - 2,
+                    matrix['cell_size'] - 2
+                )
+                key = f"{p1}_{p2}"
+                color = self.colors['active'] if self.repulsion_matrix[key] else self.colors['button']
+                pygame.draw.rect(screen, color, rect)
 
     def draw_sliders(self, screen):
         """Render parameter adjustment sliders with current values.
@@ -218,11 +221,11 @@ class ParticleGUI:
             pygame.draw.line(screen, self.colors['button'], (x, y), (x + 260, y), 4)
             # Draw slider handle
             handle_x = x + 260 * ((slider['value'] - slider['min']) / 
-                                 (slider['max'] - slider['min']))
+                                  (slider['max'] - slider['min']))
             pygame.draw.circle(screen, self.colors['active'], (int(handle_x), y), 8)
             # Draw label
             label = self.font.render(f"{slider['label']}: {slider['value']:.1f}", 
-                                   True, self.colors['text'])
+                                     True, self.colors['text'])
             screen.blit(label, (x, y - 25))
 
     def draw_buttons(self, screen):
@@ -230,28 +233,26 @@ class ParticleGUI:
         
         Handles two types of buttons:
         - Momentary buttons (Reset) - trigger immediate action
-        - Toggle buttons (Pause) - show active/inactive state
+        - Toggle buttons (Pause, Repulsion, Attract) - show active/inactive state
         - Buttons change color when activated
         
         Args:
             screen (pygame.Surface): Surface to draw buttons on
         """
         for button in self.controls['buttons']:
-
             color = self.colors['button']
             if button['label'] == 'Pause' and self.params.get('paused'):
                 color = self.colors['active']
             elif button['label'] == 'Repulsion' and self.params['repulsion']:
-                color = self.colors['active']  # Button turns color when active 
+                color = self.colors['active']
             elif button['label'] == 'Attract' and self.params['attraction']:
-                color = self.colors['active']  # "Attract"-Button turns color when active
+                color = self.colors['active']
 
             pygame.draw.rect(screen, color, button['rect'])
             text = self.font.render(button['label'], True, self.colors['text'])
             text_rect = text.get_rect(center=button['rect'].center)
             screen.blit(text, text_rect)
             
-
     def handle_input(self, event):
         """Main input handler routing events to appropriate sub-handlers.
         
@@ -279,7 +280,7 @@ class ParticleGUI:
         start_y_repel = start_y_attract + 200  # Matrix repulsion (lower)
         
         for i in range(4):
-            for j in range(i, 4):
+            for j in range(4):
                 rect_attract = pygame.Rect(
                     start_x + j * matrix['cell_size'],
                     start_y_attract + i * matrix['cell_size'],
@@ -298,7 +299,6 @@ class ParticleGUI:
                 # When clicked on the upper matrix, switch attraction
                 if rect_attract.collidepoint(mouse_pos):
                     self.interaction_matrix[key] = not self.interaction_matrix[key]
-
                 # When clicked on the lower matrix, switch repulsion
                 elif rect_repel.collidepoint(mouse_pos):
                     self.repulsion_matrix[key] = not self.repulsion_matrix[key]
@@ -346,7 +346,6 @@ class ParticleGUI:
                 elif button['label'] == "Pause":
                     self.params['paused'] = not self.params.get('paused', False)
                 elif button['label'] == "Repulsion":
-                    self.params['repulsion'] = not self.params['repulsion']  # Switch (True/False)
+                    self.params['repulsion'] = not self.params['repulsion']  # Toggle repulsion state
                 elif button['label'] == "Attract":
-                    self.params['attraction'] = not self.params['attraction']  # Switch (True/False)
-
+                    self.params['attraction'] = not self.params['attraction']  # Toggle attraction state
