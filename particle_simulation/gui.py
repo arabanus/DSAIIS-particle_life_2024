@@ -2,7 +2,33 @@ import pygame
 from pygame.locals import *
 
 class ParticleGUI:
+    """A graphical user interface (GUI) for controlling particle simulation parameters.
+    
+    This class handles all GUI elements including interaction matrices, sliders, 
+    buttons, and parameter management. It integrates with Pygame for rendering.
+    
+    Attributes:
+        screen_width (int): Total width of the application window in pixels.
+        screen_height (int): Total height of the application window in pixels.
+        gui_width (int): Width reserved for the control panel on the right side.
+        font (pygame.Font): Font object used for all text rendering.
+        colors (dict): Color scheme dictionary with RGB values for GUI elements.
+        interaction_matrix (dict): Tracks attraction states between particle type pairs.
+        repulsion_matrix (dict): Tracks repulsion states between particle type pairs.
+        params (dict): Current simulation parameters controlled by GUI elements.
+        controls (dict): Geometry and state information for all interactive elements.
+    """
+     
     def __init__(self, screen_width, screen_height):
+        """Initialize GUI with default values and layout parameters.
+        
+        Sets up color schemes, interaction matrices, and default parameter values.
+        Does NOT create visual elements - call create_controls() after initialization.
+        
+        Args:
+            screen_width (int): Total width of main application window
+            screen_height (int): Total height of main application window
+        """
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.gui_width = 300
@@ -42,7 +68,15 @@ class ParticleGUI:
         self.params['attraction'] = False 
 
     def create_controls(self):
-        """Initialize GUI control positions and sizes"""
+        """Initialize positions and dimensions for all GUI components.
+        
+        Creates three main control sections:
+        1. Interaction matrices (attraction and repulsion grids)
+        2. Parameter sliders (number of particles, speed, radius, strength)
+        3. Control buttons (reset, pause)
+        
+        Stores geometry in self.controls dictionary for later drawing.
+        """
         self.controls = {
             # Interaction Matrix
             'matrix': {
@@ -66,7 +100,17 @@ class ParticleGUI:
         }
 
     def draw(self, screen):
-        """Draw all GUI elements"""
+        """Master drawing method that renders all GUI components.
+        
+        Execution order:
+        1. Draw right-side background panel
+        2. Draw interaction matrices
+        3. Draw parameter sliders
+        4. Draw control buttons
+        
+        Args:
+            screen (pygame.Surface): Main display surface to draw on
+        """
         # Draw background panel
         pygame.draw.rect(screen, self.colors['background'], 
                         (self.screen_width - self.gui_width, 0, 
@@ -83,7 +127,17 @@ class ParticleGUI:
         self.draw_buttons(screen)
 
     def draw_interaction_matrix(self, screen):
-        """Draw the particle interaction grid"""
+        """Render the upper matrix controlling attraction between particles.
+        
+        Visual layout:
+        - 4x4 grid (A-D x A-D) in upper right panel
+        - Columns represent other particle types
+        - Rows represent current particle type
+        - Active cells (interactions) shown in blue
+        
+        Args:
+            screen (pygame.Surface): Surface to draw matrix on
+        """
         matrix = self.controls['matrix']
         start_x = self.screen_width - self.gui_width + matrix['x']
         start_y = matrix['y']
@@ -111,6 +165,14 @@ class ParticleGUI:
                     pygame.draw.rect(screen, color, rect)
 
     def draw_repulsion_matrix(self, screen):
+        """Render the lower matrix controlling repulsion between particles.
+        
+        Identical layout to attraction matrix but positioned 200px lower.
+        Uses same color scheme but tracks separate interaction states.
+        
+        Args:
+            screen (pygame.Surface): Surface to draw matrix on
+        """
         matrix = self.controls['matrix']
         start_x = self.screen_width - self.gui_width + matrix['x']
         start_y = matrix['y'] + 200
@@ -138,7 +200,17 @@ class ParticleGUI:
                     pygame.draw.rect(screen, color, rect)
 
     def draw_sliders(self, screen):
-        """Draw parameter sliders"""
+        """Render parameter adjustment sliders with current values.
+        
+        Draws four horizontal sliders:
+        1. Number of particles (100-5000)
+        2. Base speed (0.1-2.0)
+        3. Influence radius (10-100)
+        4. Attraction strength (0.1-1.0)
+        
+        Args:
+            screen (pygame.Surface): Surface to draw sliders on
+        """
         for slider in self.controls['sliders']:
             x = self.screen_width - self.gui_width + 20
             y = slider['y']
@@ -154,7 +226,16 @@ class ParticleGUI:
             screen.blit(label, (x, y - 25))
 
     def draw_buttons(self, screen):
-        """Draw control buttons"""
+        """Render interactive buttons with state-dependent coloring.
+        
+        Handles two types of buttons:
+        - Momentary buttons (Reset) - trigger immediate action
+        - Toggle buttons (Pause) - show active/inactive state
+        - Buttons change color when activated
+        
+        Args:
+            screen (pygame.Surface): Surface to draw buttons on
+        """
         for button in self.controls['buttons']:
 
             color = self.colors['button']
@@ -172,7 +253,11 @@ class ParticleGUI:
             
 
     def handle_input(self, event):
-        """Handle mouse interactions with GUI"""
+        """Main input handler routing events to appropriate sub-handlers.
+        
+        Args:
+            event (pygame.Event): Input event to process (MOUSEBUTTONDOWN)
+        """
         if event.type == MOUSEBUTTONDOWN:
             mouse_pos = pygame.mouse.get_pos()
             self.handle_matrix_click(mouse_pos)
@@ -180,6 +265,14 @@ class ParticleGUI:
             self.handle_button_click(mouse_pos)
 
     def handle_matrix_click(self, mouse_pos):
+        """Process clicks in either interaction matrix.
+        
+        Determines which matrix cell was clicked and toggles the corresponding
+        interaction state in either interaction_matrix or repulsion_matrix.
+        
+        Args:
+            mouse_pos (tuple): (x,y) coordinates of mouse click
+        """
         matrix = self.controls['matrix']
         start_x = self.screen_width - self.gui_width + matrix['x']
         start_y_attract = matrix['y']  # Matrix attraction (upper)
@@ -211,7 +304,14 @@ class ParticleGUI:
                     self.repulsion_matrix[key] = not self.repulsion_matrix[key]
 
     def handle_slider_click(self, mouse_pos):
-        """Update slider values"""
+        """Update slider values based on vertical mouse position.
+        
+        When mouse is near slider track (Y coordinate match), calculates
+        new value based on horizontal position between slider min/max.
+        
+        Args:
+            mouse_pos (tuple): (x,y) coordinates of mouse click
+        """
         for slider in self.controls['sliders']:
             x = self.screen_width - self.gui_width + 20
             y = slider['y']
@@ -231,7 +331,14 @@ class ParticleGUI:
                     self.params['attraction_strength'] = slider['value']
 
     def handle_button_click(self, mouse_pos):
-        """Handle button clicks"""
+        """Detect button clicks and trigger corresponding actions.
+        
+        Checks collision between mouse position and button rectangles.
+        Updates parameters dictionary with state changes.
+        
+        Args:
+            mouse_pos (tuple): (x,y) coordinates of mouse click
+        """
         for button in self.controls['buttons']:
             if button['rect'].collidepoint(mouse_pos):
                 if button['label'] == "Reset":
