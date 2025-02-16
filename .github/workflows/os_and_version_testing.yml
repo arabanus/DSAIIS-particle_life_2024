@@ -35,7 +35,13 @@ jobs:
 
     - name: Set PYTHONPATH
       run: |
-        echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
+        if [[ "$RUNNER_OS" == "Windows" ]]; then
+          echo "PYTHONPATH=${{ github.workspace }}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
+        else
+          echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
+        fi
+      shell: bash
+
 
     - name: Lint with Ruff
       run: |
