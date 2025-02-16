@@ -213,7 +213,3 @@ by Mohamad Aimesh, Jasmin Al Karawani, Julia Moor, Dalia Salih, Anton Rabanus.
 
 - **Licensing Information:**  
   This project is licensed under the MIT License. (See the LICENSE file for full details.)
-
----
-
-This README draft is designed to serve as a comprehensive and professional guide for your Particle Simulator project. Feel free to adjust any section to better suit your project’s unique aspects or team experiences.
