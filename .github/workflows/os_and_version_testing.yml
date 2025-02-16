@@ -33,15 +33,14 @@ jobs:
       run: |
         pip install pytest
 
-    - name: Set PYTHONPATH
-      run: |
-        if [[ "$RUNNER_OS" == "Windows" ]]; then
-          echo "PYTHONPATH=${{ github.workspace }}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
-        else
-          echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
-        fi
-      shell: bash
+    - name: Set PYTHONPATH (Linux/macOS)
+      if: runner.os != 'Windows'
+      run: echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
 
+    - name: Set PYTHONPATH (Windows)
+      if: runner.os == 'Windows'
+      run: echo "PYTHONPATH=${{ github.workspace }}" >> $GITHUB_ENV
+      shell: bash
 
     - name: Lint with Ruff
       run: |
