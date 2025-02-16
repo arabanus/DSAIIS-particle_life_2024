@@ -1,5 +1,3 @@
-Below is a complete README draft that follows your outline and incorporates details from your project scripts:
-
 ---
 
 # Particle Simulator
