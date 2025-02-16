@@ -2,7 +2,7 @@ import pytest
 import random
 import pygame
 import math
-from particle_simulation import ParticleField, Particle, interaction_effects
+from particle_simulation.main_classes import ParticleField, Particle, interaction_effects
 
 # Mock Particle class for testing purposes
 class TestParticle(Particle):

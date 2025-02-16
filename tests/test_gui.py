@@ -1,6 +1,6 @@
 import pytest
 import pygame
-from particle_gui import ParticleGUI
+from particle_simulation.gui import ParticleGUI
 
 @pytest.fixture
 def setup_pygame():
