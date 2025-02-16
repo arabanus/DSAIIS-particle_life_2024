@@ -77,7 +77,7 @@ class ParticleField:
 
 
 
-    def start_movement(self, ax, interaction_options):
+    def start_movement(self, interaction_options):
         """
         Simulates the continuous movement of particles
         """
@@ -108,20 +108,6 @@ class ParticleField:
             
             # New Pygame rendering
             screen.fill((0, 0, 0))  # Clear screen
-            for p in self.particles:
-                # Convert coordinates (Matplotlib vs Pygame Y-axis)
-                y_pos = self.height - p.position[1]  # Invert Y-axis
-                color = tuple(int(255 * c) for c in p.color)  # Convert 0-1 → 0-255
-                
-                # Draw based on shape
-                if p.shape == "o":  # Circle
-                    pygame.draw.circle(screen, color, 
-                                     (int(p.position[0]), int(y_pos)), 3)
-                elif p.shape == "s":  # Square
-                    rect = pygame.Rect(p.position[0]-2, y_pos-2, 5, 5)
-                    pygame.draw.rect(screen, color, rect)
-                # ... Add other shape handlers
-    
             pygame.display.flip()  # Update screen
             clock.tick(60)  # Enforce 60 FPS cap
     
