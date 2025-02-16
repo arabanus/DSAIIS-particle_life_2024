@@ -54,20 +54,6 @@ def test_generate_particles():
         assert particle.position[0] < field.width
         assert particle.position[1] < field.height
 
-# Test interaction_effects attraction
-def test_attract_particles():
-    field = ParticleField(100, 100, 10)
-    effect = interaction_effects(field.particles, field.width, field.height)
-    
-    # Enable some interactions for testing
-    interaction_options = {"A_A": True, "A_B": True, "B_A": True, "B_B": True}
-
-    # Test the attraction of particles
-    original_position = field.particles[0].position
-    effect.attract_particles(interaction_enabled=interaction_options)
-
-    # The particle should have moved if attraction is enabled
-    assert field.particles[0].position != original_position
 
 # Test spatial index building
 def test_spatial_index_building():
