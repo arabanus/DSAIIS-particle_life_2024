@@ -1,31 +1,39 @@
 import random
-import matplotlib.pyplot as plt
+import pygame
 import math
 from scipy.spatial import cKDTree
 
 
 
 class ParticleField:
+    """
+    Main container for handling all particle interactions.
+
+    Handles the generation and positioning of particles and display updates.
+    Manages interactions between different particle types
+
+    Attributes:
+        - width: width of the particle field
+        - height: height of the particle field
+        - num_particles: number of particles participating in the simulation
+        - particles: list of all partile instances in the field
+    """
     def __init__(self, width, height, num_particles):
         self.width = width
         self.height = height
         self.num_particles = num_particles
         self.particles = self.generate_particles()
+        self.interactions = interaction_effects(self.particles, self.width, self.height)
 
-
-    def create_field(self, scale_factor=10):
-        """
-        Creates a matplotlib field to visualize particles
-        """
-        fig, ax = plt.subplots(figsize=(self.width / scale_factor, self.height / scale_factor))
-        ax.set_xlim(0, self.width)
-        ax.set_ylim(0, self.height)
-        ax.set_title("Particle Field")
-        return fig, ax
 
     def generate_particles(self):
         """
-        Generates particles distributed evenly on a grid
+        Creates particles arranged in a grid pattern with random types
+
+        This method generates particles using 3 rules:
+        - distributes particles evenly along a grid
+        - randomly assigns particle types A, B, C or D
+        - makes sure that the total count is equal to num_particles parameter
         """
         from particle_simulation.particle_classes import Particle_A, Particle_B, Particle_C, Particle_D  #lazy import to avoid loop
 
@@ -45,34 +53,22 @@ class ParticleField:
 
 
 
-    def plot_particles(self, ax):
-        """
-        plots all particles on a given matplotlib axis with their assigned shapes and colors
-        Returns a dictionary of scatter objects, one for each shape
-        """
-        scatter_objects = {}  # Store scatter objects for each shape
-
-        for shape in set(p.shape for p in self.particles):
-            # Get particles of the current shape
-            x_coords = [p.position[0] for p in self.particles if p.shape == shape]
-            y_coords = [p.position[1] for p in self.particles if p.shape == shape]
-            colors = [p.color for p in self.particles if p.shape == shape]
-
-            # Plot these particles with their shape
-            scatter = ax.scatter(x_coords, y_coords, s=10, c=colors, marker=shape)
-            scatter_objects[shape] = scatter
-
-        return scatter_objects
-
+ 
 
     @staticmethod
     def move_particle(particle, velocity, width, height):
-        """updates the particles position 
-        Args:
-        particle: the particles position
-        velocity: A randomly generated value within the range defined by self.speed, determining the small incremental steps for the particle's movement
-        width, height: the width and height of the field
+        """
+        Updates the particles position
+        When a particle reaches an edge it is wrapped around using modulo of the field size
         
+        Args:
+            - particle: particle to move
+            - velocity: movement vector of the particle
+            - width: screen width for wraparound
+            - height: screen height for wraparound
+
+        Returns:
+            - tuple: new particle position
         """
         new_x = (particle[0] + velocity[0]) % width
         new_y = (particle[1] + velocity[1]) % height
@@ -80,27 +76,22 @@ class ParticleField:
 
 
 
-    def update_plot(self, scatter_objects):
-        """
-        Updates the scatter plots with new particle positions for each shape.
-        """
-        for shape, scatter in scatter_objects.items():
-            # Update the scatter plot for the current shape
-            scatter.set_offsets([
-                (particle.position[0], particle.position[1])
-                for particle in self.particles if particle.shape == shape
-            ])
-
-
 
     def start_movement(self, ax, interaction_options):
         """
         Simulates the continuous movement of particles
         """
-        scatter_objects = self.plot_particles(ax)
-        effect = interaction_effects(self.particles)
+        pygame.init()
+        screen = pygame.display.set_mode((self.width, self.height))
+        clock = pygame.time.Clock()
+        effect = interaction_effects(self.particles, self.width, self.height)
 
-        while True:
+        running = True
+        while running:
+            # Handle events (critical for responsive GUI)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
             for particle in self.particles:
                 velocity = (
                     random.uniform(-particle.step_size, particle.step_size),  # Movement in the x-direction
@@ -115,9 +106,53 @@ class ParticleField:
             effect.attract_particles(interaction_enabled = interaction_options)  # Use the interaction options provided in the __main__ function
             #effect.repel_particles(interaction_enabled = interaction_options) #still to be defined
             
-            # Update the plot
-            self.update_plot(scatter_objects)
-            plt.pause(0.005)  # Pause for the animation
+            # New Pygame rendering
+            screen.fill((0, 0, 0))  # Clear screen
+            for p in self.particles:
+                # Convert coordinates (Matplotlib vs Pygame Y-axis)
+                y_pos = self.height - p.position[1]  # Invert Y-axis
+                color = tuple(int(255 * c) for c in p.color)  # Convert 0-1 → 0-255
+                
+                # Draw based on shape
+                if p.shape == "o":  # Circle
+                    pygame.draw.circle(screen, color, 
+                                     (int(p.position[0]), int(y_pos)), 3)
+                elif p.shape == "s":  # Square
+                    rect = pygame.Rect(p.position[0]-2, y_pos-2, 5, 5)
+                    pygame.draw.rect(screen, color, rect)
+                # ... Add other shape handlers
+    
+            pygame.display.flip()  # Update screen
+            clock.tick(60)  # Enforce 60 FPS cap
+    
+        pygame.quit()
+
+    def create_display(self):
+        """
+        Initalizes Pygame display instance for particle rendering
+        """
+        pygame.init()
+        self.screen = pygame.display.set_mode((self.width, self.height))
+        self.clock = pygame.time.Clock()
+    
+    # Convert Matplotlib markers to Pygame draw calls
+    def draw_particles(self):
+        """
+        Render particles using pygame primitives
+        """
+        self.screen.fill((0, 0, 0))  # Clear screen
+        for p in self.particles:
+            # Convert color from 0-1 range to 0-255
+            color = tuple(int(255 * c) for c in p.color)
+            # Handle different shapes
+            if p.shape == "^":  # Triangle
+                points = self.calculate_triangle_points(p.position)
+                pygame.draw.polygon(self.screen, color, points)
+            elif p.shape == "o":  # Circle
+                pygame.draw.circle(self.screen, color, 
+                                 (int(p.position[0]), int(p.position[1])), 3)
+            # ... similar for other shapes
+        pygame.display.flip()
 
 
 
@@ -126,6 +161,21 @@ class ParticleField:
 
 
 class Particle:
+    """
+    Base class representing a single particle in the simulation.
+    
+    Defines common properties and methods for all particle types.
+    Is subclassed for specific particle behaviors.
+    
+    Attributes:
+        - position: Current coordinates
+        - step_size: Base movement speed per frame
+        - influence_strength: Force magnitude for interactions
+        - influence_radius: Detection range for other particles
+        - color: RGB color values
+        - shape: Symbol representing particle shape
+        - particle_label: Type identifier
+    """
     def __init__(self, position):
         # Basic properties of the particle (actual values to be given in the child classes)
         self.particle_label = None                                        # type of the particle (A,B,C,D)
@@ -135,18 +185,26 @@ class Particle:
         self.influence_strength = random.uniform(0, 1)**2                 # Random quadratic strength
         self.influence_radius = None                                      # Radius of influence 
         self.color = None                                                 # color of the particle
+        self.shape= "o"
+        self.min_distance = 5                                             # Minimum distance between particles to avoid overlap                                           
     
     @staticmethod
     def generate_particle_colors(particle_type, iterations):
         """
-        Generates unique colors based on particle type, ensuring no duplicates within the type.
-
+        Generate unique color variations for particle types.
+        
+        Uses different color schemes per particle type:
+        - A: Red-dominated colors
+        - B: Green-dominated colors
+        - C: Blue-dominated colors
+        - D: Yellow/Orange colors
+        
         Args:
-            particle_type (str): The type of particle (e.g., 'Particle_A').
-            iterations (int): Number of colors to generate.
-
+            - particle_type: Particle class name to generate colors for
+            - iterations: Number of unique colors needed
+            
         Returns:
-            list: A list of unique colors for the given particle type.
+            - list: Unique RGB tuples in 0-1 range
         """
         color_schemes = {
             "Particle_A": lambda: (random.uniform(0.6, 1.0), random.uniform(0, 0.4), random.uniform(0, 0.4)),
@@ -170,29 +228,23 @@ class Particle:
         return list(unique_colors)
     
 
-    @staticmethod
-    def generate_particle_shape(particle_type):
-        shapes = {
-        "Particle_A": "^",
-        "Particle_B": "o",
-        "Particle_C": "s",
-        "Particle_D": "D",
-        }
-  
-        if particle_type not in shapes:
-            raise ValueError(f"Unknown particle type: {particle_type}")
-
-        shape_generator = shapes[particle_type]
-
-        return shape_generator
-
-
 
 
 class interaction_effects:
-    def __init__(self, particles):
+    """Manager class for particle interaction physics.
+    
+    Handles both attraction and repulsion forces between particles
+    using spatial indexing for efficient neighbor detection.
+    
+    Attributes:
+        particles: Reference to master particle list
+        spatial_tree: Spatial index for neighbor queries
+    """
+    def __init__(self, particles, width, height):
         self.particles = particles
         self.build_spatial_index()
+        self.width = width
+        self.height = height
 
     def attract_particles(self, interaction_enabled):
 
@@ -217,11 +269,17 @@ class interaction_effects:
                     if distance > 0:
                         dx /= distance
                         dy /= distance
+                    else:
+                        dx = 0
+                        dy = 0
 
                     influence = particle.influence_strength
+                    if distance - influence < particle.min_distance: # Prüfen, dass Partikel nicht überrlappen
+                        influence = max(0, abs(distance - particle.min_distance))
+                    
                     particle.position = (
-                        particle.position[0] + dx * influence,
-                        particle.position[1] + dy * influence
+                        (particle.position[0] + dx * influence) % self.width, # Wrap für X- und Y-Koordinaten
+                        (particle.position[1] + dy * influence) % self.height
                     )
                 else:
                     continue  #Skip if interaction is disabled
@@ -242,37 +300,54 @@ class interaction_effects:
                 interaction_key = f"{particle.particle_label[-1]}_{neighbor.particle_label[-1]}"  # gets the last character of the particle_label and the neighbors particle_label(A_A)
                 
                 if repulsion_enabled.get(interaction_key, False):
+                    dx = neighbor.position[0] - particle.position[0]
+                    dy = neighbor.position[1] - particle.position[1]
+                    distance = math.sqrt(dx**2 + dy**2)
 
+                    if distance > 0:
+                        dx /= distance
+                        dy /= distance
+                    else:
+                        dx = 0
+                        dy = 0
 
-                    #--------->implement repulsion logic here <----------
-                
-                    pass
+                    influence = particle.influence_strength
+                    if distance - influence < particle.min_distance: # Prüfen, dass Partikel nicht überrlappen
+                        influence = max(0, abs(distance - particle.min_distance))
 
+                    particle.position = (
+                        (particle.position[0] - dx * influence) % self.width, # Umgekehrte Bewegung
+                        (particle.position[1] - dy * influence) % self.height # Wrap für X- und Y-Koordinaten
+                    )
                 else:
-                    continue
+                    continue  #Skip if interaction is disabled
 
+                    
+            
 
 
     def build_spatial_index(self):
-        """Builds a spatial index to get all particles positions using cKDTree"""
+        """
+        Rebuild spatial index tree for neighbor detection.
+        
+        Should be called before any interaction calculations.
+        Uses scipy's cKDTree for O(log n) nearest neighbor queries.
+        """ 
         positions = [p.position for p in self.particles]
         self.spatial_tree = cKDTree(positions)
-=======
-   
-class Particle:
-    def __init__(self, x=0, y=0): # kann natürlich beim mergen gelöscht werden, anders konnte ich meine class nicht testen
-        self.x = x
-        self.y = y
+
 
     def find_particles_within_reactionradius(self, main_particle):
-        """Finds neighbors within the reaction radius using an efficient cKDTree model"""
+        """Find particles within influence radius of given particle.
+        
+        Args:
+            main_particle (Particle): Center particle for search
+            
+        Returns:
+            list: Nearby Particle instances (excluding self)
+        """        
         neighbors_idx = self.spatial_tree.query_ball_point(main_particle.position, main_particle.influence_radius)
 
         return [self.particles[i] for i in neighbors_idx if self.particles[i] != main_particle] #exclude the particle it self ad a neighbor
-
-
-
-
-
 
 
