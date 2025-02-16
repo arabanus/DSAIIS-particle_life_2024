@@ -2,4 +2,4 @@ llvmlite>=0.41.1
 numba<=0.58.1
 numpy<=1.24.4
 pygame==2.6.1
-scipy==1.15.1
+scipy<=1.13.1
