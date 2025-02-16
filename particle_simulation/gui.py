@@ -62,7 +62,6 @@ class ParticleGUI:
             'buttons': [
                 {'label': "Reset", 'rect': pygame.Rect(990, 700, 120, 40)},
                 {'label': "Pause", 'rect': pygame.Rect(990, 750, 120, 40)} 
-
             ]
         }
 
@@ -77,7 +76,6 @@ class ParticleGUI:
         self.draw_interaction_matrix(screen)
         self.draw_repulsion_matrix(screen)
 
-        
         # Draw sliders
         self.draw_sliders(screen)
         
@@ -89,9 +87,9 @@ class ParticleGUI:
         matrix = self.controls['matrix']
         start_x = self.screen_width - self.gui_width + matrix['x']
         start_y = matrix['y']
-        title_text = self.font.render("Interaction Matrix", True, self.colors['text'])
-        screen.blit(title_text, (start_x, start_y - 40))  # Position der Überschrift
-        
+        title_text = self.font.render("Attraction", True, self.colors['text'])
+        screen.blit(title_text, (start_x + 170, start_y + 70)) # Title position next to matrix
+
         # Draw labels
         for i, p in enumerate(matrix['particles']):
             text = self.font.render(p, True, self.colors['text'])
@@ -111,21 +109,21 @@ class ParticleGUI:
                     key = f"{p1}_{p2}"
                     color = self.colors['active'] if self.interaction_matrix[key] else self.colors['button']
                     pygame.draw.rect(screen, color, rect)
+
     def draw_repulsion_matrix(self, screen):
         matrix = self.controls['matrix']
         start_x = self.screen_width - self.gui_width + matrix['x']
-        start_y = matrix['y'] + 200  # Position unter der ersten Matrix
-        title_text = self.font.render("Repulsion Matrix", True, self.colors['text'])
-        screen.blit(title_text, (start_x, start_y - 40))  # Position der Überschrift
+        start_y = matrix['y'] + 200
+        title_text = self.font.render("Repulsion", True, self.colors['text'])
+        screen.blit(title_text, (start_x + 170 , start_y + 70)) # Title position next to matrix
 
-        
-        # Labels zeichnen
+        # Draw labels
         for i, p in enumerate(matrix['particles']):
             text = self.font.render(p, True, self.colors['text'])
             screen.blit(text, (start_x + i * matrix['cell_size'], start_y - 20))
             screen.blit(text, (start_x - 20, start_y + i * matrix['cell_size']))
         
-        # Gitter zeichnen
+        # Draw grid
         for i, p1 in enumerate(matrix['particles']):
             for j, p2 in enumerate(matrix['particles']):
                 if j >= i:
@@ -158,13 +156,14 @@ class ParticleGUI:
     def draw_buttons(self, screen):
         """Draw control buttons"""
         for button in self.controls['buttons']:
+
             color = self.colors['button']
             if button['label'] == 'Pause' and self.params.get('paused'):
                 color = self.colors['active']
             elif button['label'] == 'Repulsion' and self.params['repulsion']:
-                color = self.colors['active']  # Button wird farbig, wenn aktiv
+                color = self.colors['active']  # Button turns color when active 
             elif button['label'] == 'Attract' and self.params['attraction']:
-                color = self.colors['active']  # "Attract"-Button wird farbig, wenn aktiv
+                color = self.colors['active']  # "Attract"-Button turns color when active
 
             pygame.draw.rect(screen, color, button['rect'])
             text = self.font.render(button['label'], True, self.colors['text'])
@@ -183,8 +182,8 @@ class ParticleGUI:
     def handle_matrix_click(self, mouse_pos):
         matrix = self.controls['matrix']
         start_x = self.screen_width - self.gui_width + matrix['x']
-        start_y_attract = matrix['y']  # Obere Matrix für Attraction
-        start_y_repel = start_y_attract + 200  # Untere Matrix für Repulsion
+        start_y_attract = matrix['y']  # Matrix attraction (upper)
+        start_y_repel = start_y_attract + 200  # Matrix repulsion (lower)
         
         for i in range(4):
             for j in range(i, 4):
@@ -203,11 +202,11 @@ class ParticleGUI:
 
                 key = f"{matrix['particles'][i]}_{matrix['particles'][j]}"
 
-                # Wenn auf die obere Matrix geklickt wird, Attraction umschalten
+                # When clicked on the upper matrix, switch attraction
                 if rect_attract.collidepoint(mouse_pos):
                     self.interaction_matrix[key] = not self.interaction_matrix[key]
 
-                # Wenn auf die untere Matrix geklickt wird, Repulsion umschalten
+                # When clicked on the lower matrix, switch repulsion
                 elif rect_repel.collidepoint(mouse_pos):
                     self.repulsion_matrix[key] = not self.repulsion_matrix[key]
 
@@ -240,7 +239,7 @@ class ParticleGUI:
                 elif button['label'] == "Pause":
                     self.params['paused'] = not self.params.get('paused', False)
                 elif button['label'] == "Repulsion":
-                    self.params['repulsion'] = not self.params['repulsion']  # Umschalten (True/False)
+                    self.params['repulsion'] = not self.params['repulsion']  # Switch (True/False)
                 elif button['label'] == "Attract":
-                    self.params['attraction'] = not self.params['attraction']  # Umschalten (True/False)
+                    self.params['attraction'] = not self.params['attraction']  # Switch (True/False)
 
