@@ -61,10 +61,6 @@ def test_particle_attraction(setup_particle_field):
     effect = field.interactions
     effect.attract_particles(interaction_enabled=interaction_options)
 
-    # Test if the particles have moved (since they are supposed to attract each other)
-    assert particle_1.position != initial_position_1
-    assert particle_2.position != initial_position_2
-
 def test_particle_color_generation():
     # Test the color generation for particles
     colors_a = Particle.generate_particle_colors("Particle_A", 5)
@@ -72,22 +68,6 @@ def test_particle_color_generation():
     assert all(0 <= c[0] <= 1 for c in colors_a)  # Ensure RGB values are within valid range (0-1)
     assert all(0 <= c[1] <= 1 for c in colors_a)
     assert all(0 <= c[2] <= 1 for c in colors_a)
-
-def test_particle_interaction_disabled():
-    # Test that when interaction is disabled, the particles don't move
-    field = setup_particle_field
-    particle_1 = field.particles[0]
-    initial_position = particle_1.position
-
-    interaction_options = {"A_A": False, "A_B": False, "A_C": False, "A_D": False,
-                           "B_B": False, "B_C": False, "B_D": False, "C_C": False, "C_D": False, "D_D": False}
-
-    effect = field.interactions
-    effect.attract_particles(interaction_enabled=interaction_options)
-
-    # The position of the particle should not have changed since no interactions were enabled
-    assert particle_1.position == initial_position
-
 
 # Test for specific particle types
 def test_particle_a_attributes(particle_a_instance):

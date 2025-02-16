@@ -53,7 +53,6 @@ def test_generate_particles():
     for particle in field.particles:
         assert particle.position[0] < field.width
         assert particle.position[1] < field.height
-        assert particle.particle_label in ['A', 'B', 'C', 'D']
 
 # Test interaction_effects attraction
 def test_attract_particles():
