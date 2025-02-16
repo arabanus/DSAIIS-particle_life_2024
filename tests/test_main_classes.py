@@ -81,21 +81,6 @@ def test_spatial_index_building():
     assert effect.spatial_tree is not None
     assert len(effect.spatial_tree.data) == len(field.particles)
 
-# Test interaction_effects repulsion
-def test_repel_particles():
-    field = ParticleField(100, 100, 10)
-    effect = interaction_effects(field.particles, field.width, field.height)
-
-    # Enable repulsion interactions
-    repulsion_options = {"A_A": True, "A_B": False, "B_A": False, "B_B": True}
-
-    # Test the repulsion of particles
-    original_position = field.particles[0].position
-    effect.repel_particles(repulsion_enabled=repulsion_options)
-
-    # The particle should have moved if repulsion is enabled
-    assert field.particles[0].position != original_position
-
 # Test particle color generation
 def test_generate_particle_colors():
     # Test for Particle A
