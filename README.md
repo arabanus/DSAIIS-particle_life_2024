@@ -165,6 +165,9 @@ by Mohamad Aimesh, Jasmin Al Karawani, Julia Moor, Dalia Salih, Anton Rabanus.
 - **Technical Challenges:**  
   - Optimizing interaction calculations for thousands of particles required careful profiling and the use of efficient data structures.
   - Balancing performance and visualization quality was challenging, especially after switching from VisPy to Pygame.
+  - **VisPy Integration:**  
+    Even though VisPy is much more efficient for particle simulation, we encountered severe compatibility issues that forced us to abandon it. VisPy sometimes failed to launch on both Windows and macOS; on macOS, GPU driver compatibility issues were persistent, and certain Windows systems exhibited similar problems. Moreover, the interaction between particles did not work as expected – they failed to interact or follow any defined rules. Although we managed to get VisPy to work once with a configuration of 40k particles, the solution was not reproducible across different systems, ultimately leading us to scrap its usage.  
+    ![VisPy Issue](path/to/vispy_issue_image) citeturn0fileX
 
 - **Team Dynamics:**  
   Transitioning to a structured issue–pull request workflow required adjustments. Although direct communication was sometimes faster, the enforced review process ultimately led to a more stable codebase.
