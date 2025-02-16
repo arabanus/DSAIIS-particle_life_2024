@@ -132,7 +132,7 @@ by Mohamad Aimesh, Jasmin Al Karawani, Julia Moor, Dalia Salih, Anton Rabanus.
 - **Results:**  
   With these strategies, the simulator reliably maintains 60 FPS under typical conditions, despite the inherent limitations of CPU-bound rendering.
 
-  ![Optimization Quality](optimization_quality.png)
+  ![Optimization Quality](optimization quality.png)
 
 ---
 
