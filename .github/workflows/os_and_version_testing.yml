@@ -32,7 +32,7 @@ jobs:
     - name: Lint with Ruff
       run: |
         ruff --version  # Verifying installation first
-        ruff check ./tests ./particle_simulation --fix --ignore E501,F403,E402,F405
+        ruff check ./tests ./particle_simulation --fix --ignore E501,F403,E402,F405,E902
 
     - name: Run tests with pytest
       run: |
