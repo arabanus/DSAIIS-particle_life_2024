@@ -1,5 +1,3 @@
-"""Main classes to run the simulation
-"""
 import random
 import matplotlib.pyplot as plt
 import math
@@ -259,12 +257,19 @@ class interaction_effects:
         """Builds a spatial index to get all particles positions using cKDTree"""
         positions = [p.position for p in self.particles]
         self.spatial_tree = cKDTree(positions)
+=======
+   
+class Particle:
+    def __init__(self, x=0, y=0): # kann natürlich beim mergen gelöscht werden, anders konnte ich meine class nicht testen
+        self.x = x
+        self.y = y
 
     def find_particles_within_reactionradius(self, main_particle):
         """Finds neighbors within the reaction radius using an efficient cKDTree model"""
         neighbors_idx = self.spatial_tree.query_ball_point(main_particle.position, main_particle.influence_radius)
 
         return [self.particles[i] for i in neighbors_idx if self.particles[i] != main_particle] #exclude the particle it self ad a neighbor
+
 
 
 
