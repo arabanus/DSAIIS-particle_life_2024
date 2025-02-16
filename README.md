@@ -128,6 +128,8 @@ by Mohamad Aimesh, Jasmin Al Karawani, Julia Moor, Dalia Salih, Anton Rabanus.
 - **Results:**  
   With these strategies, the simulator reliably maintains 60 FPS under typical conditions, despite the inherent limitations of CPU-bound rendering.
 
+![Optimization Quality](optimization_quality.png)
+
 ---
 
 ## Testing & CI
@@ -164,8 +166,7 @@ by Mohamad Aimesh, Jasmin Al Karawani, Julia Moor, Dalia Salih, Anton Rabanus.
   - **VisPy Integration:**  
     Even though VisPy is much more efficient for particle simulation, we encountered severe compatibility issues that forced us to abandon it. VisPy sometimes failed to launch on both Windows and macOS; on macOS, GPU driver compatibility issues were persistent, and certain Windows systems exhibited similar problems. Moreover, the interaction between particles did not work as expected – they failed to interact or follow any defined rules. Although we managed to get VisPy to work once with a configuration of 40k particles, the solution was not reproducible across different systems, ultimately leading us to scrap its usage.
  
-    
-    ![VisPy Issue](40k_particles_using_vispy.png)
+![VisPy Issue](40k_particles_using_vispy.png)
 
 
 - **Team Dynamics:**  
