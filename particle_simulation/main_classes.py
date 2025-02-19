@@ -74,53 +74,6 @@ class ParticleField:
         new_y = (particle[1] + velocity[1]) % height
         return (new_x, new_y)
 
-
-
-
-    def start_movement(self, interaction_options):
-        """
-        Simulates the continuous movement of particles
-        """
-        pygame.init()
-        screen = pygame.display.set_mode((self.width, self.height))
-        clock = pygame.time.Clock()
-        effect = interaction_effects(self.particles, self.width, self.height)
-
-        running = True
-        while running:
-            # Handle events (critical for responsive GUI)
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-            for particle in self.particles:
-                velocity = (
-                    random.uniform(-particle.step_size, particle.step_size),  # Movement in the x-direction
-                    random.uniform(-particle.step_size, particle.step_size)   # Movement in the y-direction
-                )
-                # Update the position of the particle
-                particle.position = self.move_particle(
-                    particle.position, velocity, self.width, self.height
-                )
-            
-            effect.build_spatial_index()
-            effect.attract_particles(interaction_enabled = interaction_options)  # Use the interaction options provided in the __main__ function
-            #effect.repel_particles(interaction_enabled = interaction_options) #still to be defined
-            
-            # New Pygame rendering
-            screen.fill((0, 0, 0))  # Clear screen
-            pygame.display.flip()  # Update screen
-            clock.tick(60)  # Enforce 60 FPS cap
-    
-        pygame.quit()
-
-    def create_display(self):
-        """
-        Initalizes Pygame display instance for particle rendering
-        """
-        pygame.init()
-        self.screen = pygame.display.set_mode((self.width, self.height))
-        self.clock = pygame.time.Clock()
-
 class Particle:
     """
     Base class representing a single particle in the simulation.
